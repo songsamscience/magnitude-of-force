@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가상 실험: 힘의 크기와 물체의 변화</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 슬라이더 커스텀 스타일 */
+        input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent; 
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+        }
+        input[type=range]:focus {
+            outline: none; 
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 p-4 md:p-8 font-sans text-gray-800">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <!-- 헤더 & 컨트롤 패널 -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+            <h1 class="text-2xl md:text-3xl font-bold text-center mb-2">
+                가상 실험: 힘의 크기와 물체의 변화
+            </h1>
+            <p class="text-gray-500 text-center mb-8">
+                슬라이더를 움직여 물체에 작용하는 힘의 크기를 조절해보세요.
+            </p>
+            
+            <div class="flex flex-col items-center justify-center space-y-4">
+                <div class="flex items-center justify-between w-full max-w-lg mb-2">
+                    <span class="font-semibold text-blue-500">약한 힘 (0N)</span>
+                    <span id="forceValueDisplay" class="font-bold text-xl text-gray-700">50N</span>
+                    <span class="font-semibold text-red-500">강한 힘 (100N)</span>
+                </div>
+                <!-- 슬라이더 -->
+                <input 
+                    type="range" 
+                    id="forceSlider"
+                    min="0" 
+                    max="100" 
+                    value="50" 
+                    class="w-full max-w-lg h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 hover:accent-blue-700 transition-all"
+                >
+                <p class="text-sm text-gray-400">
+                    * 화살표는 힘이 작용하는 방향과 크기를 나타냅니다. (붉은색일수록 큰 힘)
+                </p>
+            </div>
+        </div>
+
+        <!-- 실험 영역 그리드 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- 1. 모양의 변화 -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 flex flex-col">
+                <h2 class="text-xl font-bold text-blue-600 mb-4 flex items-center">
+                    <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">1</span>
+                    모양 (변형)
+                </h2>
+                <!-- 그래픽 영역 -->
+                <div class="bg-gray-50 rounded-xl p-4 flex flex-col items-center justify-center h-48 relative overflow-hidden mb-4">
+                    <svg viewBox="0 0 100 60" class="w-full h-full overflow-visible">
+                        <!-- 벽 -->
+                        <rect x="15" y="15" width="5" height="30" fill="#9ca3af" rx="1" />
+                        
+                        <!-- 용수철 (JS로 d 속성 업데이트) -->
+                        <path id="springPath" d="" fill="none" stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        
+                        <!-- 힘 화살표 그룹 -->
+                        <g id="springArrowGroup">
+                            <!-- 화살표 모양은 JS updateVisuals에서 색상/크기 제어 -->
+                            <path d="M0,0 L-10,-6 L-10,6 Z" class="arrow-head" />
+                            <rect x="-24" y="-3" width="15" height="6" class="arrow-body" />
+                            <g stroke-width="2" opacity="0.6" class="arrow-effect">
+                                <line x1="-28" y1="-4" x2="-32" y2="-6" />
+                                <line x1="-28" y1="0" x2="-34" y2="0" />
+                                <line x1="-28" y1="4" x2="-32" y2="6" />
+                            </g>
+                        </g>
+                        
+                        <!-- 텍스트 라벨 -->
+                        <text id="springTextLabel" y="45" font-size="6" text-anchor="middle" font-weight="bold">힘</text>
+                    </svg>
+                </div>
+                <!-- 텍스트 영역 -->
+                <div class="text-center w-full bg-blue-50 p-2 rounded-lg">
+                    <p class="text-sm font-medium text-gray-700">
+                        압축 정도: <span id="springCompressionText" class="font-bold">30%</span>
+                    </p>
+                </div>
+                <p class="mt-4 text-gray-600 text-sm">
+                    힘이 클수록 용수철이 더 많이 찌그러집니다.
+                </p>
+            </div>
+
+            <!-- 2. 운동 방향의 변화 -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 flex flex-col">
+                <h2 class="text-xl font-bold text-orange-600 mb-4 flex items-center">
+                    <span class="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">2</span>
+                    운동 방향
+                </h2>
+                <!-- 그래픽 영역 -->
+                <div class="bg-gray-50 rounded-xl p-4 flex flex-col items-center justify-center h-48 relative mb-4">
+                    <svg viewBox="0 0 100 80" class="w-full h-full overflow-visible">
+                        <!-- 원래 경로 점선 -->
+                        <line x1="10" y1="50" x2="90" y2="50" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 4" />
+                        
+                        <!-- 굴러가는 공 경로 (JS로 업데이트) -->
+                        <path id="trajectoryPath" d="" fill="none" stroke="#f97316" stroke-width="2" />
+                        
+                        <!-- 공 (끝 위치, JS로 업데이트) -->
+                        <circle id="trajectoryBall" cx="90" cy="50" r="3" fill="#f97316" />
+
+                        <!-- 힘 화살표 그룹 -->
+                        <g id="trajectoryArrowGroup" style="display: none;">
+                            <path d="M0,0 L-10,-6 L-10,6 Z" class="arrow-head" />
+                            <rect x="-24" y="-3" width="15" height="6" class="arrow-body" />
+                            <g stroke-width="2" opacity="0.6" class="arrow-effect">
+                                <line x1="-28" y1="-4" x2="-32" y2="-6" />
+                                <line x1="-28" y1="0" x2="-34" y2="0" />
+                                <line x1="-28" y1="4" x2="-32" y2="6" />
+                            </g>
+                            <text x="0" y="22" font-size="6" text-anchor="middle" font-weight="bold" class="arrow-text">힘</text>
+                        </g>
+                    </svg>
+                </div>
+                <!-- 텍스트 영역 -->
+                <div class="text-center w-full bg-orange-50 p-2 rounded-lg">
+                    <p class="text-sm font-medium text-gray-700">
+                        휘어진 정도: <span id="trajectoryCurveText" class="font-bold">50</span>
+                    </p>
+                </div>
+                <p class="mt-4 text-gray-600 text-sm">
+                    옆에서 미는 힘이 클수록 진행 방향이 더 많이 꺾입니다.
+                </p>
+            </div>
+
+            <!-- 3. 운동 빠르기의 변화 -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 flex flex-col">
+                <h2 class="text-xl font-bold text-lime-600 mb-4 flex items-center">
+                    <span class="bg-lime-100 text-lime-600 w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">3</span>
+                    운동 빠르기
+                </h2>
+                <!-- 그래픽 영역 -->
+                <div class="bg-gray-50 rounded-xl p-4 flex flex-col items-center justify-center h-48 relative overflow-hidden mb-4">
+                    
+                    <!-- 애니메이션 캔버스 -->
+                    <div class="w-full h-32 relative flex items-center overflow-hidden">
+                        <!-- 트랙 라인 -->
+                        <div class="absolute w-full h-1 bg-gray-200 top-2/3 transform -translate-y-1/2"></div>
+                        
+                        <!-- 움직이는 요소 컨테이너 -->
+                        <div id="speedBallContainer" class="absolute top-2/3 transform -translate-y-1/2 left-0 transition-all duration-0 ease-linear">
+                            <!-- 공 -->
+                            <div class="w-6 h-6 bg-lime-500 rounded-full shadow-md relative z-10 -translate-y-1/2"></div>
+                            
+                            <!-- 속도 효과선 (Tail) -->
+                            <div id="speedTail" class="absolute right-3 top-0 transform -translate-y-1/2 flex flex-col gap-1 opacity-60 z-0" style="display: none;">
+                                <div class="h-0.5 bg-lime-400 rounded-full" id="tail1"></div>
+                                <div class="h-0.5 bg-lime-400 rounded-full" id="tail2"></div>
+                            </div>
+                        </div>
+
+                        <!-- 힘 화살표 (초기에만 표시) -->
+                        <div id="speedArrowContainer" class="absolute left-0 top-2/3 transform -translate-y-1/2 z-20 pointer-events-none" style="display: none;">
+                             <svg width="60" height="40" viewBox="0 0 60 40" class="overflow-visible">
+                                <g id="speedArrowGroup">
+                                    <path d="M0,0 L-10,-6 L-10,6 Z" class="arrow-head" />
+                                    <rect x="-24" y="-3" width="15" height="6" class="arrow-body" />
+                                    <g stroke-width="2" opacity="0.6" class="arrow-effect">
+                                        <line x1="-28" y1="-4" x2="-32" y2="-6" />
+                                        <line x1="-28" y1="0" x2="-34" y2="0" />
+                                        <line x1="-28" y1="4" x2="-32" y2="6" />
+                                    </g>
+                                    <text x="0" y="15" font-size="6" text-anchor="middle" font-weight="bold" class="arrow-text">힘</text>
+                                </g>
+                             </svg>
+                        </div>
+                    </div>
+
+                    <!-- 컨트롤 버튼 -->
+                    <div class="flex gap-2 absolute top-4 right-4">
+                        <button id="btnPlay" class="flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-colors bg-lime-100 text-lime-700 hover:bg-lime-200">
+                            <!-- Play Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            출발
+                        </button>
+                        <button id="btnStop" class="hidden flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-colors bg-red-100 text-red-600 hover:bg-red-200">
+                            정지
+                        </button>
+                        <button id="btnReset" class="p-1 rounded-full text-gray-400 hover:bg-gray-200 transition-colors" title="초기화">
+                            <!-- RotateCcw Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74-2.74L3 12"></path><path d="M3 3v9h9"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 텍스트 영역 -->
+                <div class="text-center w-full bg-lime-50 p-2 rounded-lg">
+                    <p class="text-sm font-medium text-gray-700">
+                        속도: <span id="speedValueText" class="font-bold">85 km/h</span>
+                    </p>
+                </div>
+                <p class="mt-4 text-gray-600 text-sm">
+                    뒤에서 미는 힘이 클수록 물체의 속도가 더 빨라집니다.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-gray-400 text-sm py-4">
+            ⓒ 2025. 송쌤과학 All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        // --- State ---
+        let force = 50;
+        let isAnimating = false;
+        let speedProgress = 0;
+        let animationFrameId = null;
+
+        // --- DOM Elements ---
+        const slider = document.getElementById('forceSlider');
+        const forceDisplay = document.getElementById('forceValueDisplay');
+        
+        // Spring Elements
+        const springPath = document.getElementById('springPath');
+        const springArrowGroup = document.getElementById('springArrowGroup');
+        const springTextLabel = document.getElementById('springTextLabel');
+        const springCompressionText = document.getElementById('springCompressionText');
+
+        // Trajectory Elements
+        const trajectoryPath = document.getElementById('trajectoryPath');
+        const trajectoryBall = document.getElementById('trajectoryBall');
+        const trajectoryArrowGroup = document.getElementById('trajectoryArrowGroup');
+        const trajectoryCurveText = document.getElementById('trajectoryCurveText');
+
+        // Speed Elements
+        const speedBallContainer = document.getElementById('speedBallContainer');
+        const speedTail = document.getElementById('speedTail');
+        const tail1 = document.getElementById('tail1');
+        const tail2 = document.getElementById('tail2');
+        const speedArrowContainer = document.getElementById('speedArrowContainer');
+        const speedArrowGroup = document.getElementById('speedArrowGroup');
+        const speedValueText = document.getElementById('speedValueText');
+        const btnPlay = document.getElementById('btnPlay');
+        const btnStop = document.getElementById('btnStop');
+        const btnReset = document.getElementById('btnReset');
+
+        // --- Logic Functions ---
+
+        // 힘의 단계에 따른 색상 계산 (Blue -> Red)
+        function getColor(value) {
+            const r1 = 59, g1 = 130, b1 = 246; // Blue-500
+            const r2 = 239, g2 = 68, b2 = 68; // Red-500
+            const ratio = value / 100;
+            const r = Math.round(r1 + (r2 - r1) * ratio);
+            const g = Math.round(g1 + (g2 - g1) * ratio);
+            const b = Math.round(b1 + (b2 - b1) * ratio);
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // 용수철 Path 생성기
+        function generateSpringPath(f) {
+            const startX = 20;
+            const compression = (f / 100) * 40; 
+            const width = 60 - compression; 
+            const endX = startX + width;
+            
+            const coils = 8;
+            const coilWidth = width / coils;
+            
+            let d = `M ${startX},25 `;
+            for (let i = 0; i < coils; i++) {
+                const x = startX + (i * coilWidth);
+                d += `L ${x + coilWidth/4},15 L ${x + 3*coilWidth/4},35 L ${x + coilWidth},25 `;
+            }
+            d += `L ${endX + 10},25`;
+            
+            return { path: d, endX: endX + 10 };
+        }
+
+        // 화살표 스타일 업데이트 (Reusable logic)
+        function updateArrowStyle(groupElement, color, scale) {
+            // Fill colors
+            const heads = groupElement.querySelectorAll('.arrow-head');
+            const bodies = groupElement.querySelectorAll('.arrow-body');
+            const effects = groupElement.querySelectorAll('.arrow-effect');
+            const texts = groupElement.querySelectorAll('.arrow-text');
+            
+            heads.forEach(el => el.setAttribute('fill', color));
+            bodies.forEach(el => el.setAttribute('fill', color));
+            effects.forEach(el => el.setAttribute('stroke', color));
+            texts.forEach(el => el.setAttribute('fill', color));
+
+            return scale; // Just returns scale for external transform usage if needed
+        }
+
+        // --- Main Update Function ---
+        function updateVisuals() {
+            const color = getColor(force);
+            const scale = 0.8 + (force / 200);
+
+            // 0. Global Text
+            forceDisplay.innerText = `${force}N`;
+
+            // 1. Shape (Spring)
+            const springData = generateSpringPath(force);
+            springPath.setAttribute('d', springData.path);
+            
+            // Spring Arrow Position & Rotation (180 deg = left)
+            const springArrowX = springData.endX;
+            springArrowGroup.setAttribute('transform', `translate(${springArrowX}, 25) rotate(180) scale(${scale})`);
+            updateArrowStyle(springArrowGroup, color, scale);
+            
+            // Text Label position
+            springTextLabel.setAttribute('x', springData.endX + 15);
+            springTextLabel.setAttribute('fill', color);
+
+            // Compression Text
+            springCompressionText.innerText = `${Math.round(force * 0.6)}%`;
+            springCompressionText.style.color = color;
+
+            // 2. Direction (Trajectory)
+            const pathEndY = 50 - (force * 0.4);
+            const dCurve = `M 10,50 Q 50,${50} 90,${pathEndY}`;
+            trajectoryPath.setAttribute('d', dCurve);
+            trajectoryBall.setAttribute('cy', pathEndY);
+
+            // Trajectory Arrow Position & Rotation (-90 deg = up)
+            if (force > 0) {
+                trajectoryArrowGroup.style.display = 'inline';
+                trajectoryArrowGroup.setAttribute('transform', `translate(50, 53) rotate(-90) scale(${scale})`);
+                updateArrowStyle(trajectoryArrowGroup, color, scale);
+            } else {
+                trajectoryArrowGroup.style.display = 'none';
+            }
+
+            // Curve Text
+            trajectoryCurveText.innerText = force;
+            trajectoryCurveText.style.color = color;
+
+            // 3. Speed (Ball)
+            // Note: Position is handled by animation loop, here we update visuals dependent on force
+            const speedVal = Math.round(10 + force * 1.5);
+            speedValueText.innerText = `${speedVal} km/h`;
+            speedValueText.style.color = color;
+
+            // Speed Tail Size
+            tail1.style.width = `${10 + force * 0.4}px`;
+            tail2.style.width = `${6 + force * 0.3}px`;
+
+            // Speed Arrow (Initial position)
+            // Arrow points right (0 deg)
+            speedArrowGroup.setAttribute('transform', `translate(30, 20) rotate(0) scale(${scale})`);
+            updateArrowStyle(speedArrowGroup, color, scale);
+        }
+
+        // --- Animation Logic ---
+        function animate() {
+            if (!isAnimating) return;
+
+            const step = 0.5 + (force / 100) * 2.5;
+            speedProgress += step;
+            
+            if (speedProgress >= 100) {
+                speedProgress = 0; // Loop
+            }
+
+            // Move Ball
+            speedBallContainer.style.left = `${speedProgress}%`;
+            
+            // Hide Arrow if moving past start
+            if (speedProgress > 10) {
+                speedArrowContainer.style.display = 'none';
+            } else {
+                speedArrowContainer.style.display = 'block';
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        function startAnimation() {
+            if (isAnimating) return;
+            isAnimating = true;
+            btnPlay.classList.add('hidden');
+            btnStop.classList.remove('hidden');
+            speedTail.style.display = 'flex'; // Show tail
+            animate();
+        }
+
+        function stopAnimation() {
+            isAnimating = false;
+            cancelAnimationFrame(animationFrameId);
+            btnPlay.classList.remove('hidden');
+            btnStop.classList.add('hidden');
+            speedTail.style.display = 'none'; // Hide tail
+            // speedArrowContainer.style.display = 'block'; // Show arrow when stopped? (Optional, maybe keep it hidden if far away)
+        }
+
+        function resetAnimation() {
+            stopAnimation();
+            speedProgress = 0;
+            speedBallContainer.style.left = '0%';
+            speedArrowContainer.style.display = 'block';
+        }
+
+        // --- Event Listeners ---
+        slider.addEventListener('input', (e) => {
+            force = parseInt(e.target.value);
+            updateVisuals();
+        });
+
+        btnPlay.addEventListener('click', startAnimation);
+        btnStop.addEventListener('click', stopAnimation);
+        btnReset.addEventListener('click', resetAnimation);
+
+        // --- Init ---
+        updateVisuals();
+        speedArrowContainer.style.display = 'block'; // Ensure visible on start
+
+    </script>
+</body>
+</html>

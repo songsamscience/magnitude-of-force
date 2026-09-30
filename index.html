@@ -1,431 +1,1304 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>가상 실험: 힘의 크기와 물체의 변화</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* 슬라이더 커스텀 스타일 */
-        input[type=range] {
-            -webkit-appearance: none; 
-            background: transparent; 
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-        }
-        input[type=range]:focus {
-            outline: none; 
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="version" content="2.0">
+<meta name="description" content="에어 테이블 위의 퍽을 여러 방향·크기의 힘으로 밀어 속력이 변하는 운동, 방향이 변하는 운동, 둘 다 변하는 운동을 만들어 보고, 자를 눌러 힘의 크기에 따라 모양이 변하는 정도를 비교하는 중학교 과학 가상실험실">
+<meta property="og:title" content="송쌤과학 가상실험실 | 힘의 크기와 물체의 변화">
+<meta property="og:description" content="같은 퍽이라도 어느 쪽으로, 얼마나 세게 미느냐에 따라 빨라지거나, 꺾이거나, 둘 다 변해요">
+<meta property="og:type" content="website">
+<meta name="theme-color" id="metaTheme" content="#101b28">
+<title>송쌤과학 가상실험실 | 힘의 크기와 물체의 변화</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23101b28'/%3E%3Cpath%20d='M8%2044h10m6%200h6m6-4%206-8m4-8%205-9'%20fill='none'%20stroke='%238ea2b4'%20stroke-width='4'%20stroke-linecap='round'/%3E%3Ccircle%20cx='50'%20cy='16'%20r='8'%20fill='%235aa2ff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script>(function(){try{var t=localStorage.getItem('ssv-theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}})();</script>
+<style>
+/* ═══════ 송쌤과학 중1 가상실험실 공통 껍데기 (체험버전 V2.11) ═══════
+   ① 테마와 무관한 토큰 → ② 테마 토큰(두 블록, 같은 목록) → ③ 마감 기본층 → ④ 껍데기 부품
+   실험실마다 달라지는 장면 토큰·배치는 각 실험실 src/app.css에 둔다. */
+:root{
+  --font-ui:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --font-title:var(--font-ui);
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--sp-10:40px;
+  --r-1:6px;--r-2:10px;--r-3:16px;--r-full:999px;        /* 작은 컨트롤 6 · 버튼·입력 10 · 패널·장면 16 · 상태 알약 full */
+  --control-h:36px;--icon-size:18px;
+  --dur-fast:140ms;--dur-ui:260ms;--dur-ui-out:180ms;--dur-layout:360ms;
+  --ease-out:cubic-bezier(.2,0,0,1);--ease-in:cubic-bezier(.4,0,1,1);--lift:8px;
+  --top-h:56px;--strip-h:0px;
+  --light-angle:215deg;                                   /* 주 광원: 왼쪽 위 — UI 그림자는 오른쪽 아래로 */
+  --brand-pink:#FFB7B2;--brand-ink:#3b1d1b;
+  --yt-red:#ff0033;--yt-play:#ffffff;--ig-1:#feda75;--ig-2:#fa7e1e;--ig-3:#d62976;--ig-4:#4f5bd5;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --surface-0:#0b131d;--surface-1:#101b28;--surface-2:#182636;
+  --stage:#0e1a27;--stage-2:#132233;
+  --text-1:#e8eff5;--text-2:#b0c0cf;--text-3:#8ea2b4;--line-1:#223445;--line-2:#34495d;
+  --accent:#6fd3c1;--accent-strong:#9be7d9;--accent-soft:#163a3b;--on-accent:#08131c;--focus:#9be7d9;--scrim:#02070dcc;
+  --danger:#ff9d8a;--danger-soft:#3b2322;--ok:#7ed7a0;--ok-soft:#1d3b32;--warn:#ffcf5c;--warn-soft:#3f3822;
+  --data-1:#E69F00;--data-2:#56B4E9;--data-3:#2fbf92;--data-4:#CC79A7;
+  --shadow-color:215 45% 3%;
+  --shadow-1:0 0 #0000;
+  --shadow-2:0 12px 32px -12px hsl(var(--shadow-color) / .6);
+  --shadow-3:0 24px 64px -16px hsl(var(--shadow-color) / .7);
+  --edge-hi:inset 0 1px 0 hsl(0 0% 100% / .06);
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --surface-0:#edf1f4;--surface-1:#fbfcfd;--surface-2:#e3eaf0;
+  --stage:#f5f8fa;--stage-2:#e9eff4;
+  --text-1:#132a3b;--text-2:#44596b;--text-3:#566b7e;--line-1:#d3dde5;--line-2:#b2c3d0;
+  --accent:#0f6b60;--accent-strong:#0a5148;--accent-soft:#d5eeea;--on-accent:#ffffff;--focus:#0a5148;--scrim:#0b1a2680;
+  --danger:#b3261e;--danger-soft:#fbe3df;--ok:#1d7a47;--ok-soft:#d8f0e2;--warn:#8a5a00;--warn-soft:#fff2c8;
+  --data-1:#B07400;--data-2:#0072B2;--data-3:#007A5A;--data-4:#A6508A;
+  --shadow-color:210 30% 22%;
+  --shadow-1:0 1px 2px hsl(var(--shadow-color) / .08);
+  --shadow-2:0 1px 2px hsl(var(--shadow-color) / .06),0 10px 28px -10px hsl(var(--shadow-color) / .22);
+  --shadow-3:0 2px 6px hsl(var(--shadow-color) / .08),0 24px 56px -16px hsl(var(--shadow-color) / .30);
+  --edge-hi:0 0 #0000;
+}
+/* ③ 마감 기본층 (§6.8) */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;accent-color:var(--accent)}
+body{margin:0;background:var(--surface-0);color:var(--text-1);font:400 15px/1.65 var(--font-ui);font-synthesis:none;word-break:keep-all;overflow-wrap:break-word}
+:root[data-theme="dark"] body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+p,li,figcaption{text-wrap:pretty}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{font-size:max(16px,1em)}
+button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+::selection{background:color-mix(in oklab,var(--accent) 30%,transparent)}
+input,textarea{caret-color:var(--accent)}
+*{scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.scroll{overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.num{font-variant-numeric:tabular-nums}
+.unit{white-space:nowrap}
+img,canvas,video{display:block;max-width:100%}
+[hidden]{display:none!important}
+dialog:not([open]){display:none}
+[popover]:not(:popover-open){display:none}
+.sr-only{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:8px;top:-60px;z-index:90;padding:8px 12px;border-radius:var(--r-1);background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:600}
+.skip:focus{top:8px}
+kbd{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;padding:3px 5px;color:var(--text-1);background:var(--surface-0)}
+svg.ic{width:var(--icon-size);height:var(--icon-size);fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.muted{color:var(--text-2)}
+/* ⑤ 사용자 설정 존중 */
+@media (prefers-reduced-motion:reduce){:root{--lift:0px}}
+@media (prefers-contrast:more){:root[data-theme]{--line-1:var(--line-2);--text-3:var(--text-2)}}
+@media (prefers-reduced-transparency:reduce){.glass{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--surface-1)!important}}
+
+/* ═══ 몸체: 상단 막대 / 본문 / (휴대폰) 브랜드 띠 ═══ */
+html,body{height:100%}
+body{height:100dvh;display:grid;grid-template-rows:var(--top-h) minmax(0,1fr) var(--strip-h);overflow:hidden}
+.topbar{position:relative;z-index:30;display:flex;align-items:center;gap:12px;padding:0 10px 0 16px;background:var(--surface-1);border-bottom:1px solid var(--line-1);min-width:0}
+.brand{display:flex;align-items:center;gap:8px;white-space:nowrap;flex:none}
+.brandmark{width:27px;height:27px;border-radius:var(--r-2);background:var(--brand-pink);color:var(--brand-ink);display:grid;place-items:center;flex:none}
+.brandmark svg.ic{width:17px;height:17px;stroke-width:2}
+.word{font:700 13px/1 var(--font-ui);color:var(--text-1)}
+.vdiv{width:1px;height:15px;background:var(--line-2);flex:none}
+.social{position:relative;width:34px;height:34px;display:grid;place-items:center;border-radius:var(--r-1);color:var(--text-2);text-decoration:none;flex:none}
+.social::before{content:'';position:absolute;inset:-5px}
+.social svg{width:21px;height:21px}
+.social .yt-body{fill:currentColor}.social .yt-play{fill:var(--surface-1)}
+.social .ig-line{fill:none;stroke:currentColor;stroke-width:2}.social .ig-dot{fill:currentColor}
+.social:is(:hover,:focus-visible) .yt-body{fill:var(--yt-red)}.social:is(:hover,:focus-visible) .yt-play{fill:var(--yt-play)}
+.social:is(:hover,:focus-visible) .ig-line{stroke:url(#ig-grad)}.social:is(:hover,:focus-visible) .ig-dot{fill:var(--ig-3)}
+.top-title{display:flex;align-items:baseline;gap:10px;min-width:0;flex:1 1 auto}
+.top-title h1{font:700 15px/1.2 var(--font-ui);color:var(--text-1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.top-title .std{font:500 12px/1 var(--font-ui);color:var(--text-2);white-space:nowrap}
+.utilities{margin-left:auto;display:flex;align-items:center;gap:2px;flex:none}
+.hsep{width:1px;height:20px;background:var(--line-1);margin:0 4px}
+.icon-btn{position:relative;width:36px;height:36px;display:grid;place-items:center;border:0;border-radius:var(--r-2);background:transparent;color:var(--text-2);cursor:pointer;transition:background var(--dur-fast),color var(--dur-fast),transform var(--dur-fast)}
+.icon-btn::before{content:'';position:absolute;inset:-4px}
+.icon-btn svg.ic{width:20px;height:20px}
+.icon-btn:active{transform:scale(.94)}
+@media (hover:hover) and (pointer:fine){.icon-btn:hover,.social:hover{background:var(--surface-2);color:var(--text-1)}}
+main.app{position:relative;min-width:0;min-height:0;overflow:hidden;outline:none}
+
+/* ═══ 버튼 계층: Primary / Secondary / Ghost / Icon ═══ */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--control-h);padding:0 14px;border:1px solid var(--line-2);border-radius:var(--r-2);background:var(--surface-1);color:var(--text-1);font:600 13px/1.2 var(--font-ui);cursor:pointer;white-space:nowrap;transition:background var(--dur-fast),border-color var(--dur-fast),transform var(--dur-fast)}
+.btn::before{content:'';position:absolute;inset:-4px 0}
+.btn svg.ic{width:17px;height:17px}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--text-2)}
+.btn.small{min-height:32px;padding:0 10px;font-size:13px}
+.btn.wide{width:100%}
+.btn[aria-disabled="true"],.btn:disabled{opacity:.5;cursor:not-allowed}
+@media (hover:hover) and (pointer:fine){
+  .btn:not(.primary):not(:disabled):hover{background:var(--surface-2)}
+  .btn.primary:not(:disabled):hover{background:var(--accent-strong);border-color:var(--accent-strong)}
+  .btn.ghost:hover{color:var(--text-1)}
+}
+/* 칩 · 세그먼트 */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 11px;border:1px solid var(--line-2);border-radius:var(--r-full);background:transparent;color:var(--text-1);font:500 13px/1 var(--font-ui);cursor:pointer;white-space:nowrap}
+.chip::before{content:'';position:absolute;inset:-6px -2px}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--text-1);font-weight:700}
+.chip[aria-pressed="true"]::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);order:-1}
+.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;padding:3px;border-radius:var(--r-2);background:var(--surface-2);border:1px solid var(--line-1)}
+.seg button{position:relative;min-height:30px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:var(--text-2);font:600 13px/1.2 var(--font-ui);cursor:pointer;white-space:nowrap}
+.seg button::before{content:'';position:absolute;inset:-6px -1px}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--surface-1);color:var(--text-1);font-weight:800;box-shadow:var(--edge-hi),0 1px 2px hsl(var(--shadow-color) / .18)}
+@media (hover:hover) and (pointer:fine){.chip:hover{border-color:var(--text-2)}.seg button:not([aria-pressed="true"]):not([aria-selected="true"]):hover{color:var(--text-1)}}
+
+/* 결과 저장 — 장면 모서리의 카메라 (Ghost/Icon 계층) */
+.save-btn{position:relative;display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px 0 9px;border:1px solid var(--line-2);border-radius:var(--r-2);background:color-mix(in oklab,var(--surface-1) 88%,transparent);color:var(--text-1);font:600 13px/1 var(--font-ui);cursor:pointer;white-space:nowrap;box-shadow:var(--edge-hi)}
+.save-btn::before{content:'';position:absolute;inset:-5px}
+.save-btn svg.ic{width:18px;height:18px}
+.save-btn[aria-busy="true"]{opacity:.6;cursor:progress}
+@media (hover:hover) and (pointer:fine){.save-btn:hover{background:var(--surface-2)}}
+.shutter{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;animation:shutter .32s var(--ease-out);z-index:5;border-radius:inherit}
+@keyframes shutter{0%{opacity:.55}100%{opacity:0}}
+
+/* 판독값 — 라벨 · 큰 수 · 작은 단위 */
+.readout{display:flex;align-items:baseline;gap:4px;font-variant-numeric:tabular-nums}
+.readout .v{font:800 26px/1.05 var(--font-ui);letter-spacing:-.02em;color:var(--text-1)}
+.readout .u{font:600 13px/1 var(--font-ui);color:var(--text-2)}
+.lbl{font:600 12px/1.4 var(--font-ui);color:var(--text-2)}
+
+/* 슬라이더 (네이티브 range + accent-color, 트랙 4px 이상 · 터치 44px) */
+input[type="range"]{width:100%;height:44px;margin:0;background:transparent;cursor:pointer;touch-action:pan-y}
+
+/* ═══ 대화상자 · 드로어 · 토스트 ═══ */
+dialog{border:0;padding:0;color:var(--text-1);background:var(--surface-1)}
+dialog::backdrop{background:var(--scrim)}
+.modal{width:min(620px,calc(100vw - 32px));max-height:min(86dvh,760px);border-radius:var(--r-3);box-shadow:var(--edge-hi),var(--shadow-3)}
+.modal[open]{display:flex;flex-direction:column}
+.modal.narrow{width:min(420px,calc(100vw - 32px))}
+.drawer{margin:0 0 0 auto;height:100dvh;max-height:100dvh;width:clamp(360px,32vw,460px);border-left:1px solid var(--line-1);box-shadow:var(--shadow-3)}
+.drawer[open]{display:flex;flex-direction:column}
+.drawer::backdrop{background:color-mix(in oklab,var(--scrim) 55%,transparent)}
+.dialog-head{display:flex;align-items:center;gap:8px;padding:12px 10px 12px 20px;border-bottom:1px solid var(--line-1);flex:none}
+.dialog-head h2{font:800 18px/1.3 var(--font-ui);margin-right:auto}
+.dialog-body{padding:16px 20px 22px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+:is(dialog,[popover]).sheet{opacity:0;transform:translateY(var(--lift));transition:opacity var(--dur-ui-out) var(--ease-in),transform var(--dur-ui-out) var(--ease-in),overlay var(--dur-ui-out) allow-discrete,display var(--dur-ui-out) allow-discrete}
+:is(dialog[open],[popover]:popover-open).sheet{opacity:1;transform:none;transition-duration:var(--dur-ui);transition-timing-function:var(--ease-out)}
+@starting-style{:is(dialog[open],[popover]:popover-open).sheet{opacity:0;transform:translateY(var(--lift))}}
+.drawer.sheet{transform:translateX(24px)}
+.drawer.sheet[open]{transform:none}
+@starting-style{.drawer.sheet[open]{transform:translateX(24px)}}
+@media (prefers-reduced-motion:reduce){.drawer.sheet,.drawer.sheet[open]{transform:none}}
+.help-doc h3{font:700 15px/1.4 var(--font-ui);margin:18px 0 6px;color:var(--text-1)}
+.help-doc h3:first-child{margin-top:0}
+.help-doc p,.help-doc li{font-size:15px;line-height:1.7;color:var(--text-1)}
+.help-doc ul,.help-doc ol{margin:0;padding-left:20px}
+.help-doc li+li{margin-top:4px}
+.help-doc .keys{line-height:2.2}
+.brandblock{margin-top:16px;padding:12px 14px;border-radius:var(--r-2);background:var(--surface-2);font-size:13px;line-height:1.8;color:var(--text-1)}
+.brandblock a{color:var(--text-1)}
+.ver-line{margin-top:10px;font:500 12px/1 var(--font-ui);color:var(--text-2)}
+/* 원리 카드 */
+.tcard{padding:0 0 18px;border-bottom:1px solid var(--line-1);margin-bottom:18px}
+.tcard:last-child{border-bottom:0;margin-bottom:0}
+.tcard h3{font:800 18px/1.35 var(--font-ui);margin:0 0 8px}
+.tcard figure{margin:0 0 10px;border-radius:var(--r-2);background:var(--stage);border:1px solid var(--line-1);overflow:hidden}
+.tcard figure svg{display:block;width:100%;height:auto}
+.tcard .def{font:700 15px/1.6 var(--font-ui);margin-bottom:6px}
+.tcard p{font-size:15px;line-height:1.7;color:var(--text-1)}
+.tcard p+p{margin-top:6px}
+.tcard .link{margin-top:10px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-1) var(--r-1) 0;font-size:15px;line-height:1.65}
+.toast{position:fixed;left:50%;bottom:calc(20px + var(--strip-h) + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:10px;max-width:min(360px,calc(100vw - 24px));padding:10px 14px;border-radius:var(--r-2);background:var(--surface-1);border:1px solid var(--line-2);box-shadow:var(--edge-hi),var(--shadow-2);font:500 13px/1.5 var(--font-ui);color:var(--text-1)}
+.toast.error{border-color:var(--danger)}
+.toast .toast-x{flex:none;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:var(--r-1);background:transparent;color:var(--text-2);cursor:pointer}
+.textlink{display:inline-flex;align-items:center;gap:6px;color:var(--text-1);font:600 13px/1 var(--font-ui);text-decoration:underline;text-underline-offset:3px;padding:10px 0}
+.textlink .yt-ic{width:20px;height:20px;stroke:none}
+.textlink .yt-ic .yt-body{fill:var(--yt-red)}.textlink .yt-ic .yt-play{fill:#fff}
+
+/* ═══ 휴대폰 세로(≤600px): 브랜드·채널은 아래 브랜드 띠로, 위에는 제목 + 고정 세트 ═══ */
+@media (max-width:600px){
+  :root{--top-h:52px;--strip-h:40px}
+  .topbar{padding:0 4px 0 12px;gap:6px}
+  .topbar>.vdiv{display:none}
+  .top-title .std{display:none}
+  .top-title h1{font-size:15px}
+  .brand{position:fixed;left:0;right:0;bottom:0;z-index:30;height:calc(var(--strip-h) + env(safe-area-inset-bottom));padding:0 12px env(safe-area-inset-bottom);background:var(--surface-1);border-top:1px solid var(--line-1);justify-content:flex-start}
+  .brand .social{width:44px;height:36px}
+  .brand .social svg{width:18px;height:18px}
+  .utilities .hsep{margin:0 2px}
+  .icon-btn{width:40px;height:40px}
+  .drawer{width:100vw;height:86dvh;margin:auto 0 0;border-left:0;border-top:1px solid var(--line-1);border-radius:var(--r-3) var(--r-3) 0 0}
+  .drawer.sheet{transform:translateY(24px)}
+  @starting-style{.drawer.sheet[open]{transform:translateY(24px)}}
+}
+@media (max-width:360px){.icon-btn{width:38px}.utilities{gap:0}}
+
+/* ═══════ 이 실험실 ═══════ */
+/* 힘의 크기와 물체의 변화 — 넓은 장면(에어 테이블은 가로로 긴 운동) + 아래 계기 덱 */
+:root[data-theme="dark"]{
+  --force:#ff7b5c;--force-ink:#5a1a0e;
+  --table:#16273a;--table-2:#1b3047;--rail:#2c4258;--rail-hi:#3d5873;--hole:#2c4661;
+  --puck-hi:#b7d7ff;--puck:#5aa2ff;--puck-lo:#1d4f95;--puck-cap:#dbe9ff;
+  --dot-before:#9fb2c4;--dot-after:#5aa2ff;--ghost-dot:#8ea2b4;--guide:#6f879e;--zone:#ff7b5c;
+  --desk-hi:#6b4a2f;--desk-lo:#4a321f;--desk-edge:#8a6440;
+  --ruler:#e3d7a0;--ruler-edge:#a8995a;--ruler-ink:#3a3320;--clamp:#8d98a5;--clamp-lo:#56606b;--scale:#c7d2dc;--scale-ink:#0e1a27;
+}
+:root[data-theme="light"]{
+  --force:#cf3a1c;--force-ink:#ffffff;
+  --table:#e4ebf1;--table-2:#d6e0e8;--rail:#7d8e9f;--rail-hi:#a9b8c6;--hole:#b9c7d3;
+  --puck-hi:#9ec8ff;--puck:#1f6fd1;--puck-lo:#0e3f80;--puck-cap:#e6f0ff;
+  --dot-before:#5f7385;--dot-after:#1f6fd1;--ghost-dot:#8a9cad;--guide:#7d90a2;--zone:#cf3a1c;
+  --desk-hi:#c89b66;--desk-lo:#9a7045;--desk-edge:#6f4c2b;
+  --ruler:#f3e7ae;--ruler-edge:#b9a860;--ruler-ink:#3a3320;--clamp:#8d98a5;--clamp-lo:#5f6a76;--scale:#fbfcfd;--scale-ink:#132a3b;
+}
+
+.lab{height:100%;display:grid;grid-template-rows:minmax(0,1fr) auto}
+.stage-wrap{position:relative;display:flex;flex-direction:column;min-height:0;background:var(--stage)}
+.stage-head{display:flex;align-items:center;gap:14px;padding:10px 14px 0;flex:none;z-index:2}
+.stage-head .tabs{flex:none}
+.stage-goal{flex:1;min-width:0;font:500 15px/1.4 var(--font-ui);color:var(--text-1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stage{position:relative;flex:1;min-height:0}
+.scene{position:absolute;inset:0;width:100%;height:100%;user-select:none;-webkit-user-select:none}
+
+/* 에어 테이블 */
+.tbl{fill:var(--table)}
+.tbl-holes{fill:url(#holes)}
+.hole{fill:var(--hole)}
+.rail{fill:var(--rail)}
+.rail-hi{fill:none;stroke:var(--rail-hi);stroke-width:.8}
+.puck-hi-s{stop-color:var(--puck-hi)}.puck-s{stop-color:var(--puck)}.puck-lo-s{stop-color:var(--puck-lo)}
+.puck{fill:url(#puckGrad);stroke:var(--puck-lo);stroke-width:.5}
+.puck-cap{fill:var(--puck-cap);opacity:.55}
+.puck-shadow{fill:#000;opacity:.18}
+.puck-plan{fill:none;stroke:var(--guide);stroke-width:.6;stroke-dasharray:1.6 1.4}
+.zone-line{stroke:var(--zone);stroke-width:.7;stroke-dasharray:2 2;opacity:.8}
+.zone-t{fill:var(--force);font-size:var(--t12);font-weight:700;text-anchor:middle;paint-order:stroke;stroke:var(--table);stroke-width:var(--h3,3px);stroke-linejoin:round}
+.zone-t.start{text-anchor:start}
+.guide{stroke:var(--guide);stroke-width:.6;stroke-dasharray:2 1.8;fill:none}
+.dot-b{fill:var(--dot-before)}
+.dot-a{fill:var(--dot-after)}
+.dot-p{fill:var(--force)}
+.gdot{fill:none;stroke:var(--ghost-dot);stroke-width:.5;opacity:.75}
+.ang-arc{fill:none;stroke:var(--text-1);stroke-width:.6}
+.ang-t{fill:var(--text-1);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--table);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+.v-t{fill:var(--text-1);font-size:var(--t12);font-weight:700;paint-order:stroke;stroke:var(--table);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+.v-t.b{fill:var(--text-2)}
+.legend{fill:var(--text-2);font-size:var(--t12);font-weight:500}
+.legend.end{text-anchor:end}
+.s-cap.mid{text-anchor:middle}
+.f-body{stroke:var(--force);stroke-width:1.9;fill:none}
+.f-tick{stroke:var(--force-ink);stroke-width:.7}
+.f-head{fill:var(--force)}
+.f-label{fill:var(--force);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--table);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+.string{stroke:var(--text-2);stroke-width:.5;stroke-dasharray:1.2 1}
+.pin{fill:var(--text-2)}
+
+/* 자 휘기 */
+.wall-bg{fill:var(--stage)}
+.desk{fill:url(#deskGrad);stroke:var(--desk-edge);stroke-width:.08}
+.desk-hi-s{stop-color:var(--desk-hi)}.desk-lo-s{stop-color:var(--desk-lo)}
+.ruler{fill:var(--ruler);stroke:var(--ruler-edge);stroke-width:.06}
+.ruler-mark{stroke:var(--ruler-ink);stroke-width:.05}
+.clamp{fill:var(--clamp);stroke:var(--clamp-lo);stroke-width:.08}
+.clamp-lo{fill:var(--clamp-lo)}
+.scale{fill:var(--scale);stroke:var(--line-2);stroke-width:.06}
+.scale-tick{stroke:var(--scale-ink);stroke-width:.05}
+.scale-t{fill:var(--scale-ink);font-size:var(--t12);font-weight:600;text-anchor:end;dominant-baseline:central;font-variant-numeric:tabular-nums}
+.s-ghost{fill:none;stroke:var(--ghost-dot);stroke-width:.08;stroke-dasharray:.35 .3}
+.drop-line{stroke:var(--force);stroke-width:.08}
+.s-cap{fill:var(--text-2);font-size:var(--t12);font-weight:500}
+.sf-body{stroke:var(--force);stroke-width:.34;fill:none}
+.sf-head{fill:var(--force)}
+.sf-label{fill:var(--force);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--stage);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+.drop-t{fill:var(--text-1);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--stage);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+
+/* 아래 계기 덱 */
+.deck{display:grid;grid-template-columns:minmax(340px,1.35fr) minmax(250px,1fr) minmax(220px,1fr) minmax(250px,1.1fr);border-top:1px solid var(--line-1);background:var(--surface-1)}
+.deck-s{grid-template-columns:minmax(300px,1.2fr) minmax(200px,.8fr) minmax(280px,1.2fr)}
+.grp{padding:10px 16px 12px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.grp+.grp{border-left:1px solid var(--line-1)}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row.col{flex-direction:column;align-items:stretch;gap:6px}
+.lbl-note{font-weight:500;color:var(--text-2);margin-left:4px}
+.dirseg{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-flow:row}
+.dirseg button{display:flex;flex-direction:column;align-items:center;gap:1px;min-height:44px;padding:3px 6px;font-size:12px}
+.dirseg svg{width:28px;height:14px}
+.dirseg button[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+.d-puck{fill:var(--puck)}.d-arr{stroke:var(--force);stroke-width:2;fill:none}.d-head{fill:var(--force)}.d-mv{stroke:var(--text-2);stroke-width:1.2;stroke-dasharray:2 1.5;fill:none}
+.magtop{display:flex;align-items:baseline;justify-content:space-between}
+.magtop .readout .v{font-size:26px}
+.ticks{display:flex;justify-content:space-between;margin-top:-10px;font:500 12px/1 var(--font-ui);color:var(--text-2);padding:0 2px}
+.go-row{display:flex;gap:8px;margin-top:auto}
+.go-row .grow{flex:1;min-height:44px;font-size:15px}
+.go-row .ghost{min-height:44px}
+.res-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ghost-tog{min-height:28px;font-size:12px}
+.res-kind{font:800 18px/1.35 var(--font-ui);color:var(--text-1);min-height:24px}
+.res-kind.idle{font:500 15px/1.5 var(--font-ui);color:var(--text-2)}
+.res-kind .tag{display:inline-flex;align-items:center;gap:6px}
+.res-list{margin:0;display:grid;gap:4px}
+.res-list div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line-1);padding:3px 0}
+.res-list dt{font:600 13px/1.5 var(--font-ui);color:var(--text-2)}
+.res-list dd{margin:0;font:700 15px/1.5 var(--font-ui);color:var(--text-1);text-align:right}
+.res-note{font:400 13px/1.5 var(--font-ui);color:var(--text-1);min-height:20px}
+.book{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.book li{display:grid;grid-template-columns:20px auto minmax(0,1fr);gap:8px;align-items:center;min-height:30px;padding:3px 8px;border-radius:var(--r-1);border:1px dashed var(--line-2)}
+.book li.on{border-style:solid;background:var(--surface-2)}
+.book li.done-row{display:block;border:0;padding:2px 0 0;min-height:0}
+.book .bk-ic{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--text-2)}
+.book li.on .bk-ic{background:var(--ok);border-color:var(--ok);color:var(--surface-1)}
+.book .bk-ic svg{width:12px;height:12px;stroke-width:2.6}
+.book .bk-n{font:700 13px/1.3 var(--font-ui);color:var(--text-1);white-space:nowrap}
+.book .bk-d{font:500 12px/1.3 var(--font-ui);color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.book-count{font:700 13px/1 var(--font-ui);color:var(--text-2)}
+.book-done{font:500 12px/1.5 var(--font-ui);color:var(--text-1)}
+.book li.done-row .textlink{padding:4px 0}
+.big .v{font-size:34px}
+#plot{width:100%;height:auto;max-height:140px}
+.p-axis{stroke:var(--line-2);stroke-width:1}
+.p-grid{stroke:var(--line-1);stroke-width:1}
+.p-t{fill:var(--text-2);font:500 11px var(--font-ui);font-variant-numeric:tabular-nums}
+.p-pt{fill:var(--force);stroke:var(--surface-1);stroke-width:1.5}
+.p-now{fill:none;stroke:var(--force);stroke-width:1.5}
+.p-trend{stroke:var(--text-2);stroke-width:1;stroke-dasharray:4 3}
+
+@media (max-width:1180px){
+  .deck{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr)}
+  .g-book{grid-column:1 / -1;border-left:0!important;border-top:1px solid var(--line-1)}
+  .book{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:860px){
+  main.app{overflow:auto}
+  .lab{height:auto;min-height:100%;grid-template-rows:auto auto}
+  .stage-wrap{height:auto;position:sticky;top:0;z-index:4;border-bottom:1px solid var(--line-1)}
+  .stage-head{flex-wrap:wrap;padding:8px 10px 0;gap:8px}
+  .stage-goal{order:3;flex-basis:100%;white-space:normal;font-size:13px}
+  .stage-head .save-btn{margin-left:auto}
+  .stage{aspect-ratio:344/188;flex:none}
+  .lab[data-tab="shape"] .stage{aspect-ratio:52/23}
+  .deck,.deck-s{grid-template-columns:minmax(0,1fr)}
+  .grp+.grp{border-left:0;border-top:1px solid var(--line-1)}
+  .book{grid-template-columns:minmax(0,1fr)}
+  .g-res{order:-1}
+  .deck .g-cond{order:-3}.deck .g-mag{order:-2}
+}
+@media (max-width:600px){
+  .save-btn{width:44px;height:44px;padding:0;justify-content:center}
+  .save-btn .save-l{display:none}
+  .dirseg{grid-template-columns:repeat(2,1fr)}
+  .dirseg button{flex-direction:row;justify-content:flex-start;gap:8px;min-height:44px;font-size:13px}
+  .grp{padding:10px 12px 12px}
+}
+
+/* 아래 덱이 있는 화면이라 알림은 장면 위쪽 가운데에 */
+.toast{bottom:auto;top:calc(var(--top-h) + 58px)}
+
+</style>
 </head>
-<body class="min-h-screen bg-gray-50 p-4 md:p-8 font-sans text-gray-800">
-
-    <div class="max-w-5xl mx-auto space-y-8">
-        
-        <!-- 헤더 & 컨트롤 패널 -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <h1 class="text-2xl md:text-3xl font-bold text-center mb-2">
-                가상 실험: 힘의 크기와 물체의 변화
-            </h1>
-            <p class="text-gray-500 text-center mb-8">
-                슬라이더를 움직여 물체에 작용하는 힘의 크기를 조절해보세요.
-            </p>
-            
-            <div class="flex flex-col items-center justify-center space-y-4">
-                <div class="flex items-center justify-between w-full max-w-lg mb-2">
-                    <span class="font-semibold text-blue-500">약한 힘 (0N)</span>
-                    <span id="forceValueDisplay" class="font-bold text-xl text-gray-700">50N</span>
-                    <span class="font-semibold text-red-500">강한 힘 (100N)</span>
-                </div>
-                <!-- 슬라이더 -->
-                <input 
-                    type="range" 
-                    id="forceSlider"
-                    min="0" 
-                    max="100" 
-                    value="50" 
-                    class="w-full max-w-lg h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 hover:accent-blue-700 transition-all"
-                >
-                <p class="text-sm text-gray-400">
-                    * 화살표는 힘이 작용하는 방향과 크기를 나타냅니다. (붉은색일수록 큰 힘)
-                </p>
-            </div>
-        </div>
-
-        <!-- 실험 영역 그리드 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-            <!-- 1. 모양의 변화 -->
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 flex flex-col">
-                <h2 class="text-xl font-bold text-blue-600 mb-4 flex items-center">
-                    <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">1</span>
-                    모양 (변형)
-                </h2>
-                <!-- 그래픽 영역 -->
-                <div class="bg-gray-50 rounded-xl p-4 flex flex-col items-center justify-center h-48 relative overflow-hidden mb-4">
-                    <svg viewBox="0 0 100 60" class="w-full h-full overflow-visible">
-                        <!-- 벽 -->
-                        <rect x="15" y="15" width="5" height="30" fill="#9ca3af" rx="1" />
-                        
-                        <!-- 용수철 (JS로 d 속성 업데이트) -->
-                        <path id="springPath" d="" fill="none" stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        
-                        <!-- 힘 화살표 그룹 -->
-                        <g id="springArrowGroup">
-                            <!-- 화살표 모양은 JS updateVisuals에서 색상/크기 제어 -->
-                            <path d="M0,0 L-10,-6 L-10,6 Z" class="arrow-head" />
-                            <rect x="-24" y="-3" width="15" height="6" class="arrow-body" />
-                            <g stroke-width="2" opacity="0.6" class="arrow-effect">
-                                <line x1="-28" y1="-4" x2="-32" y2="-6" />
-                                <line x1="-28" y1="0" x2="-34" y2="0" />
-                                <line x1="-28" y1="4" x2="-32" y2="6" />
-                            </g>
-                        </g>
-                        
-                        <!-- 텍스트 라벨 -->
-                        <text id="springTextLabel" y="45" font-size="6" text-anchor="middle" font-weight="bold">힘</text>
-                    </svg>
-                </div>
-                <!-- 텍스트 영역 -->
-                <div class="text-center w-full bg-blue-50 p-2 rounded-lg">
-                    <p class="text-sm font-medium text-gray-700">
-                        압축 정도: <span id="springCompressionText" class="font-bold">30%</span>
-                    </p>
-                </div>
-                <p class="mt-4 text-gray-600 text-sm">
-                    힘이 클수록 용수철이 더 많이 찌그러집니다.
-                </p>
-            </div>
-
-            <!-- 2. 운동 방향의 변화 -->
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 flex flex-col">
-                <h2 class="text-xl font-bold text-orange-600 mb-4 flex items-center">
-                    <span class="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">2</span>
-                    운동 방향
-                </h2>
-                <!-- 그래픽 영역 -->
-                <div class="bg-gray-50 rounded-xl p-4 flex flex-col items-center justify-center h-48 relative mb-4">
-                    <svg viewBox="0 0 100 80" class="w-full h-full overflow-visible">
-                        <!-- 원래 경로 점선 -->
-                        <line x1="10" y1="50" x2="90" y2="50" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 4" />
-                        
-                        <!-- 굴러가는 공 경로 (JS로 업데이트) -->
-                        <path id="trajectoryPath" d="" fill="none" stroke="#f97316" stroke-width="2" />
-                        
-                        <!-- 공 (끝 위치, JS로 업데이트) -->
-                        <circle id="trajectoryBall" cx="90" cy="50" r="3" fill="#f97316" />
-
-                        <!-- 힘 화살표 그룹 -->
-                        <g id="trajectoryArrowGroup" style="display: none;">
-                            <path d="M0,0 L-10,-6 L-10,6 Z" class="arrow-head" />
-                            <rect x="-24" y="-3" width="15" height="6" class="arrow-body" />
-                            <g stroke-width="2" opacity="0.6" class="arrow-effect">
-                                <line x1="-28" y1="-4" x2="-32" y2="-6" />
-                                <line x1="-28" y1="0" x2="-34" y2="0" />
-                                <line x1="-28" y1="4" x2="-32" y2="6" />
-                            </g>
-                            <text x="0" y="22" font-size="6" text-anchor="middle" font-weight="bold" class="arrow-text">힘</text>
-                        </g>
-                    </svg>
-                </div>
-                <!-- 텍스트 영역 -->
-                <div class="text-center w-full bg-orange-50 p-2 rounded-lg">
-                    <p class="text-sm font-medium text-gray-700">
-                        휘어진 정도: <span id="trajectoryCurveText" class="font-bold">50</span>
-                    </p>
-                </div>
-                <p class="mt-4 text-gray-600 text-sm">
-                    옆에서 미는 힘이 클수록 진행 방향이 더 많이 꺾입니다.
-                </p>
-            </div>
-
-            <!-- 3. 운동 빠르기의 변화 -->
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 flex flex-col">
-                <h2 class="text-xl font-bold text-lime-600 mb-4 flex items-center">
-                    <span class="bg-lime-100 text-lime-600 w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">3</span>
-                    운동 빠르기
-                </h2>
-                <!-- 그래픽 영역 -->
-                <div class="bg-gray-50 rounded-xl p-4 flex flex-col items-center justify-center h-48 relative overflow-hidden mb-4">
-                    
-                    <!-- 애니메이션 캔버스 -->
-                    <div class="w-full h-32 relative flex items-center overflow-hidden">
-                        <!-- 트랙 라인 -->
-                        <div class="absolute w-full h-1 bg-gray-200 top-2/3 transform -translate-y-1/2"></div>
-                        
-                        <!-- 움직이는 요소 컨테이너 -->
-                        <div id="speedBallContainer" class="absolute top-2/3 transform -translate-y-1/2 left-0 transition-all duration-0 ease-linear">
-                            <!-- 공 -->
-                            <div class="w-6 h-6 bg-lime-500 rounded-full shadow-md relative z-10 -translate-y-1/2"></div>
-                            
-                            <!-- 속도 효과선 (Tail) -->
-                            <div id="speedTail" class="absolute right-3 top-0 transform -translate-y-1/2 flex flex-col gap-1 opacity-60 z-0" style="display: none;">
-                                <div class="h-0.5 bg-lime-400 rounded-full" id="tail1"></div>
-                                <div class="h-0.5 bg-lime-400 rounded-full" id="tail2"></div>
-                            </div>
-                        </div>
-
-                        <!-- 힘 화살표 (초기에만 표시) -->
-                        <div id="speedArrowContainer" class="absolute left-0 top-2/3 transform -translate-y-1/2 z-20 pointer-events-none" style="display: none;">
-                             <svg width="60" height="40" viewBox="0 0 60 40" class="overflow-visible">
-                                <g id="speedArrowGroup">
-                                    <path d="M0,0 L-10,-6 L-10,6 Z" class="arrow-head" />
-                                    <rect x="-24" y="-3" width="15" height="6" class="arrow-body" />
-                                    <g stroke-width="2" opacity="0.6" class="arrow-effect">
-                                        <line x1="-28" y1="-4" x2="-32" y2="-6" />
-                                        <line x1="-28" y1="0" x2="-34" y2="0" />
-                                        <line x1="-28" y1="4" x2="-32" y2="6" />
-                                    </g>
-                                    <text x="0" y="15" font-size="6" text-anchor="middle" font-weight="bold" class="arrow-text">힘</text>
-                                </g>
-                             </svg>
-                        </div>
-                    </div>
-
-                    <!-- 컨트롤 버튼 -->
-                    <div class="flex gap-2 absolute top-4 right-4">
-                        <button id="btnPlay" class="flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-colors bg-lime-100 text-lime-700 hover:bg-lime-200">
-                            <!-- Play Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                            출발
-                        </button>
-                        <button id="btnStop" class="hidden flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-colors bg-red-100 text-red-600 hover:bg-red-200">
-                            정지
-                        </button>
-                        <button id="btnReset" class="p-1 rounded-full text-gray-400 hover:bg-gray-200 transition-colors" title="초기화">
-                            <!-- RotateCcw Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74-2.74L3 12"></path><path d="M3 3v9h9"></path></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 텍스트 영역 -->
-                <div class="text-center w-full bg-lime-50 p-2 rounded-lg">
-                    <p class="text-sm font-medium text-gray-700">
-                        속도: <span id="speedValueText" class="font-bold">85 km/h</span>
-                    </p>
-                </div>
-                <p class="mt-4 text-gray-600 text-sm">
-                    뒤에서 미는 힘이 클수록 물체의 속도가 더 빨라집니다.
-                </p>
-            </div>
-
-        </div>
-
-        <!-- Footer -->
-        <div class="text-center text-gray-400 text-sm py-4">
-            ⓒ 2025. 송쌤과학 All rights reserved.
-        </div>
+<body data-lab="magnitude-of-force">
+<a class="skip" href="#main">실험 화면으로 건너뛰기</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="ig-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" style="stop-color:var(--ig-1)"/><stop offset=".35" style="stop-color:var(--ig-2)"/><stop offset=".65" style="stop-color:var(--ig-3)"/><stop offset="1" style="stop-color:var(--ig-4)"/></linearGradient></defs></svg>
+<header class="topbar">
+  <div class="brand">
+    <span class="brandmark" id="brandIc" aria-hidden="true"></span>
+    <span class="word">송쌤과학</span>
+    <span class="vdiv" aria-hidden="true"></span>
+    <a class="social" id="yt" href="https://www.youtube.com/@songsamscience" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)" title="YouTube @songsamscience (새 창)"></a>
+    <a class="social" id="ig" href="https://www.instagram.com/songsamscience/" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 인스타그램 (새 창)" title="Instagram @songsamscience (새 창)"></a>
+  </div>
+  <span class="vdiv" aria-hidden="true"></span>
+  <div class="top-title"><h1>힘의 크기와 물체의 변화</h1><span class="std">중1 · 힘의 작용</span></div>
+  <div class="utilities">
+    <button class="icon-btn" id="bookBtn" aria-label="원리 카드 열기" title="원리 카드"></button>
+    <button class="icon-btn" id="helpBtn" aria-label="도움말 (H)" title="도움말 (H)"></button>
+    <span class="hsep" aria-hidden="true"></span>
+    <button class="icon-btn" id="fullBtn" aria-label="전체화면 (F)" title="전체화면 (F)"></button>
+    <button class="icon-btn" id="themeBtn" aria-label="라이트 모드로 전환 (D)" title="라이트 모드로 전환 (D)"></button>
+  </div>
+</header>
+<main class="app" id="main" tabindex="-1">
+<div class="lab" id="lab" data-tab="motion">
+  <section class="stage-wrap" aria-labelledby="stageCap">
+    <h2 class="sr-only" id="stageCap">실험 장면</h2>
+    <div class="stage-head">
+      <div class="seg tabs" id="tabSeg" role="tablist" aria-label="실험 고르기">
+        <button role="tab" id="tabMotion" data-tab="motion" aria-selected="true" aria-controls="stage">운동 상태 변화</button>
+        <button role="tab" id="tabShape" data-tab="shape" aria-selected="false" aria-controls="stage">모양 변화</button>
+      </div>
+      <p class="stage-goal note-slot" id="stageGoal"></p>
+      <button class="save-btn" id="saveBtn" aria-label="실험 결과를 PNG 이미지로 저장 (C)" title="실험 결과를 PNG 이미지로 저장 (C)"></button>
     </div>
+    <div class="stage" id="stage" role="tabpanel" aria-labelledby="tabMotion">
+      <svg id="sceneM" class="scene" viewBox="-12 -12 344 188" role="img" aria-label="위에서 내려다본 에어 테이블과 퍽. 점은 0.2초마다 찍은 퍽의 자리예요.">
+        <defs>
+          <radialGradient id="puckGrad" cx=".38" cy=".32" r=".75"><stop offset="0" class="puck-hi-s"/><stop offset=".7" class="puck-s"/><stop offset="1" class="puck-lo-s"/></radialGradient>
+          <pattern id="holes" width="10" height="10" patternUnits="userSpaceOnUse" x="0" y="0"><circle cx="5" cy="5" r=".75" class="hole"/></pattern>
+        </defs>
+        <g id="mTable"></g>
+        <g id="mGhost"></g>
+        <g id="mMarks"></g>
+        <g id="mDots"></g>
+        <g id="mPuck"></g>
+        <g id="mArrow"></g>
+        <g id="mTags"></g>
+      </svg>
+      <svg id="sceneS" class="scene" viewBox="0 7 52 23" role="img" aria-label="탁자 끝에 죔쇠로 고정한 플라스틱 자와 끝을 누르는 힘" hidden>
+        <defs>
+          <linearGradient id="deskGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="desk-hi-s"/><stop offset="1" class="desk-lo-s"/></linearGradient>
+        </defs>
+        <g id="sBack"></g>
+        <g id="sGhost"></g>
+        <g id="sRuler"></g>
+        <g id="sFront"></g>
+        <g id="sArrow"></g>
+        <g id="sTags"></g>
+      </svg>
+    </div>
+  </section>
 
-    <script>
-        // --- State ---
-        let force = 50;
-        let isAnimating = false;
-        let speedProgress = 0;
-        let animationFrameId = null;
+  <section class="deck" id="deckM" aria-label="운동 상태 변화 — 조건과 결과">
+    <div class="grp g-cond">
+      <div class="row">
+        <span class="lbl" id="lStart">처음 상태</span>
+        <div class="chips" role="group" aria-labelledby="lStart" id="startChips">
+          <button class="chip" data-v0="1" aria-pressed="true">움직이는 중 <span class="num">1.0 m/s</span></button>
+          <button class="chip" data-v0="0" aria-pressed="false">멈춰 있음</button>
+        </div>
+      </div>
+      <div class="row col">
+        <span class="lbl" id="lDir">힘의 방향 <span class="lbl-note">퍽이 움직이는 쪽을 기준으로</span></span>
+        <div class="seg dirseg" id="dirSeg" role="group" aria-labelledby="lDir">
+          <button data-d="fwd" aria-pressed="true"><svg viewBox="0 0 28 14" aria-hidden="true"><circle cx="8" cy="7" r="4" class="d-puck"/><path d="M13 7h9" class="d-arr"/><path d="M26 7l-5-3.5v7Z" class="d-head"/></svg><span>운동 방향</span></button>
+          <button data-d="back" aria-pressed="false"><svg viewBox="0 0 28 14" aria-hidden="true"><circle cx="20" cy="7" r="4" class="d-puck"/><path d="M15 7H6" class="d-arr"/><path d="M2 7l5-3.5v7Z" class="d-head"/><path d="M24.5 7h2" class="d-mv"/></svg><span>반대 방향</span></button>
+          <button data-d="side" aria-pressed="false"><svg viewBox="0 0 28 14" aria-hidden="true"><circle cx="9" cy="10" r="3.4" class="d-puck"/><path d="M9 6V2.8" class="d-arr"/><path d="M9 0l-3 3.6h6Z" class="d-head"/><path d="M14 10h8" class="d-mv"/></svg><span>옆으로</span></button>
+          <button data-d="turn" aria-pressed="false"><svg viewBox="0 0 28 14" aria-hidden="true"><path d="M4 12a9 9 0 0 1 18-2" class="d-mv" fill="none"/><circle cx="21" cy="10" r="3.2" class="d-puck"/><path d="M19.2 7.4 15 3.8" class="d-arr"/><path d="M13 2l.6 4.2 3.4-2.8Z" class="d-head"/></svg><span>늘 옆으로(줄)</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="grp g-mag">
+      <div class="magtop"><span class="lbl" id="lMag">힘의 크기</span><output class="readout" id="magOut" for="magRng"><span class="v num" id="magV">3.0</span><span class="u">N</span></output></div>
+      <input type="range" id="magRng" min="0" max="5" step="0.5" value="3" aria-labelledby="lMag" aria-valuetext="3.0 N">
+      <div class="ticks num" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5 N</span></div>
+      <div class="go-row">
+        <button class="btn primary grow" id="goBtn"></button>
+        <button class="btn ghost" id="clrBtn" title="장면에 남은 점과 직전 결과 지우기"></button>
+      </div>
+    </div>
+    <div class="grp g-res" aria-live="polite">
+      <div class="res-head"><span class="lbl">결과</span><button class="chip ghost-tog" id="ghostTog" aria-pressed="true" title="직전 결과를 흐린 점으로 겹쳐 보기">직전 결과</button></div>
+      <div class="res-kind" id="resKind">출발하면 결과가 여기에 나와요</div>
+      <dl class="res-list">
+        <div><dt>속력</dt><dd class="num" id="resSpeed">–</dd></div>
+        <div><dt>운동 방향</dt><dd class="num" id="resDir">–</dd></div>
+      </dl>
+      <p class="res-note" id="resNote"></p>
+    </div>
+    <div class="grp g-book">
+      <div class="res-head"><span class="lbl">변화 도감</span><span class="book-count num" id="bookCount">0/3</span></div>
+      <ul class="book" id="book"></ul>
+    </div>
+  </section>
 
-        // --- DOM Elements ---
-        const slider = document.getElementById('forceSlider');
-        const forceDisplay = document.getElementById('forceValueDisplay');
-        
-        // Spring Elements
-        const springPath = document.getElementById('springPath');
-        const springArrowGroup = document.getElementById('springArrowGroup');
-        const springTextLabel = document.getElementById('springTextLabel');
-        const springCompressionText = document.getElementById('springCompressionText');
+  <section class="deck deck-s" id="deckS" aria-label="모양 변화 — 조건과 결과" hidden>
+    <div class="grp g-mag">
+      <div class="magtop"><span class="lbl" id="lPress">자 끝을 누르는 힘</span><output class="readout" for="pressRng"><span class="v num" id="pressV">0.0</span><span class="u">N</span></output></div>
+      <input type="range" id="pressRng" min="0" max="1" step="0.1" value="0" aria-labelledby="lPress" aria-valuetext="0.0 N">
+      <div class="ticks num" aria-hidden="true"><span>0</span><span>0.2</span><span>0.4</span><span>0.6</span><span>0.8</span><span>1 N</span></div>
+      <div class="chips presets" role="group" aria-label="누르는 힘 고르기">
+        <button class="chip" data-p="0.3">살짝</button><button class="chip" data-p="0.6">꾹</button><button class="chip" data-p="1">세게</button>
+      </div>
+      <div class="go-row"><button class="btn grow" id="releaseBtn"></button></div>
+    </div>
+    <div class="grp g-res">
+      <div class="res-head"><span class="lbl">자 끝이 내려간 거리</span></div>
+      <div class="readout big"><span class="v num" id="dropV">0.0</span><span class="u">cm</span></div>
+      <p class="res-note" id="shapeNote">누르는 힘을 바꿔 자가 휘는 정도를 비교해요.</p>
+    </div>
+    <div class="grp g-plot">
+      <div class="res-head"><span class="lbl">누른 힘과 내려간 거리</span><button class="chip" id="plotClr" title="그래프의 점 지우기">점 지우기</button></div>
+      <svg id="plot" viewBox="0 0 240 132" role="img" aria-label="누른 힘과 자 끝이 내려간 거리의 그래프"></svg>
+    </div>
+  </section>
+</div>
 
-        // Trajectory Elements
-        const trajectoryPath = document.getElementById('trajectoryPath');
-        const trajectoryBall = document.getElementById('trajectoryBall');
-        const trajectoryArrowGroup = document.getElementById('trajectoryArrowGroup');
-        const trajectoryCurveText = document.getElementById('trajectoryCurveText');
+</main>
+<div class="strip-space" aria-hidden="true"></div>
+<dialog id="modal" class="modal sheet" aria-labelledby="modalTitle">
+  <header class="dialog-head"><h2 id="modalTitle"></h2><button class="icon-btn" data-close aria-label="닫기 (Esc)" title="닫기 (Esc)"></button></header>
+  <div class="dialog-body" id="modalBody"></div>
+</dialog>
+<dialog id="drawer" class="drawer sheet" aria-labelledby="drawerTitle">
+  <header class="dialog-head"><h2 id="drawerTitle">원리 카드</h2><button class="btn small ghost" id="dHelp">도움말</button><button class="icon-btn" data-close aria-label="닫기 (Esc)" title="닫기 (Esc)"></button></header>
+  <div class="dialog-body" id="drawerBody"></div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="sr-only" id="live" aria-live="polite"></div>
+<script>
+/* ═══════ 송쌤과학 중1 가상실험실 공통 껍데기 — 테마 · 전체화면 · 도움말 · 원리 카드 · 결과 저장 · 단축키 ═══════
+   각 실험실은 SS.init({...})을 한 번 부른다. 채널 주소는 이 파일의 CHANNELS 한 곳에서만 정의한다. */
+const SS = (() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const NS = 'http://www.w3.org/2000/svg';
+  const CHANNELS = { yt: 'https://www.youtube.com/@songsamscience', ig: 'https://www.instagram.com/songsamscience/' };
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ICONS = {
+    flask: '<path d="M9 3h6m-5 0v6L4.5 19A2 2 0 0 0 6.3 22h11.4a2 2 0 0 0 1.8-3L14 9V3M7.5 15h9"/>',
+    book: '<path d="M12 6.6C10.4 5.1 7.9 4.5 3.5 4.5v14c4.4 0 6.9.6 8.5 2.1 1.6-1.5 4.1-2.1 8.5-2.1v-14c-4.4 0-6.9.6-8.5 2.1Z"/><path d="M12 6.6v14"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.3c-.7.4-1.2 1-1.2 1.8v.5"/><path d="M12 17.2h.01"/>',
+    fsIn: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    fsOut: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
+    moon: '<path d="M20 14.6A8.2 8.2 0 1 1 9.4 4a6.6 6.6 0 0 0 10.6 10.6Z"/>',
+    sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/>',
+    camera: '<path d="M3.5 8.5h3.2l1.8-3h7l1.8 3h3.2v11h-17Z"/><circle cx="12" cy="13.5" r="3.6"/>',
+    x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    chev: '<path d="m9.5 6 6 6-6 6"/>',
+    chevL: '<path d="m14.5 6-6 6 6 6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    minus: '<path d="M5 12h14"/>',
+    trash: '<path d="M5 7h14M10 7V4.5h4V7M7 7l1 13h8l1-13"/>',
+    reset: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9"/><path d="M4.5 4.5V9H9"/>',
+    undo: '<path d="M9 8H5V4"/><path d="M5.3 8A8 8 0 1 1 5 15"/>',
+    play: '<path d="M7.5 5.5v13l11-6.5Z"/>',
+    pause: '<path d="M8 5.5v13M16 5.5v13"/>',
+    pen: '<path d="M4.5 19.5h4l10-10-4-4-10 10Z"/><path d="m13 7 4 4"/>',
+    push: '<path d="M3.5 12h11"/><path d="m10.5 7 5 5-5 5"/><path d="M19.5 4.5v15"/>',
+    target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/>',
+    ghost: '<circle cx="14" cy="11" r="7"/><circle cx="9.5" cy="13.5" r="5.2" stroke-dasharray="2.4 2.2"/>',
+    record: '<path d="M5 4.5h10.5l3.5 3.5v11.5H5Z"/><path d="M8.5 11h7M8.5 14.5h7M8.5 7.5h4"/>',
+    compare: '<path d="M12 3.5v17"/><rect x="3.5" y="6.5" width="6" height="11" rx="1.5"/><rect x="14.5" y="6.5" width="6" height="11" rx="1.5"/>',
+    yt: '<path class="yt-body" d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.6 2.6 0 0 0-1.8 1.8A27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8Z"/><path class="yt-play" d="M10 15.3V8.7l5.6 3.3Z"/>',
+    ig: '<rect class="ig-line" x="3" y="3" width="18" height="18" rx="5.2"/><circle class="ig-line" cx="12" cy="12" r="4.1"/><circle class="ig-dot" cx="17.4" cy="6.6" r="1.2"/>',
+  };
+  const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name] || ''}</svg>`;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-        // Speed Elements
-        const speedBallContainer = document.getElementById('speedBallContainer');
-        const speedTail = document.getElementById('speedTail');
-        const tail1 = document.getElementById('tail1');
-        const tail2 = document.getElementById('tail2');
-        const speedArrowContainer = document.getElementById('speedArrowContainer');
-        const speedArrowGroup = document.getElementById('speedArrowGroup');
-        const speedValueText = document.getElementById('speedValueText');
-        const btnPlay = document.getElementById('btnPlay');
-        const btnStop = document.getElementById('btnStop');
-        const btnReset = document.getElementById('btnReset');
+  let CFG = null;
+  const themeHooks = [];
 
-        // --- Logic Functions ---
+  /* ── 저장: 진행 상태는 sessionStorage, 테마·익명 최고 기록만 localStorage ── */
+  const KEY = n => `ssv-${CFG.id}-${n}`;
+  const store = {
+    get(n, d) { try { const v = sessionStorage.getItem(KEY(n)); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(n, v) { try { sessionStorage.setItem(KEY(n), JSON.stringify(v)); } catch (e) { } },
+    del(n) { try { sessionStorage.removeItem(KEY(n)); } catch (e) { } },
+    clear() { try { Object.keys(sessionStorage).filter(k => k.startsWith(`ssv-${CFG.id}-`)).forEach(k => sessionStorage.removeItem(k)); } catch (e) { } },
+  };
 
-        // 힘의 단계에 따른 색상 계산 (Blue -> Red)
-        function getColor(value) {
-            const r1 = 59, g1 = 130, b1 = 246; // Blue-500
-            const r2 = 239, g2 = 68, b2 = 68; // Red-500
-            const ratio = value / 100;
-            const r = Math.round(r1 + (r2 - r1) * ratio);
-            const g = Math.round(g1 + (g2 - g1) * ratio);
-            const b = Math.round(b1 + (b2 - b1) * ratio);
-            return `rgb(${r}, ${g}, ${b})`;
-        }
+  /* ── 알림 ── */
+  function announce(m) { const l = $('#live'); if (!l) return; l.textContent = ''; requestAnimationFrame(() => { l.textContent = m; }); }
+  let toastT = 0, toastLast = '', toastN = 1;
+  function toast(msg, o = {}) {
+    const e = $('#toast');
+    if (msg === toastLast && !e.hidden) toastN++; else toastN = 1;
+    toastLast = msg;
+    e.innerHTML = `<span>${esc(msg)}${toastN > 1 ? ` <b class="num">×${toastN}</b>` : ''}</span>${o.error ? `<button class="toast-x" aria-label="알림 닫기">${icon('x')}</button>` : ''}`;
+    e.classList.toggle('error', !!o.error);
+    e.hidden = false;
+    const x = e.querySelector('.toast-x'); if (x) x.onclick = () => { e.hidden = true; };
+    clearTimeout(toastT);
+    toastT = setTimeout(() => { e.hidden = true; }, o.error ? 7000 : 2800);
+  }
 
-        // 용수철 Path 생성기
-        function generateSpringPath(f) {
-            const startX = 20;
-            const compression = (f / 100) * 40; 
-            const width = 60 - compression; 
-            const endX = startX + width;
-            
-            const coils = 8;
-            const coilWidth = width / coils;
-            
-            let d = `M ${startX},25 `;
-            for (let i = 0; i < coils; i++) {
-                const x = startX + (i * coilWidth);
-                d += `L ${x + coilWidth/4},15 L ${x + 3*coilWidth/4},35 L ${x + coilWidth},25 `;
-            }
-            d += `L ${endX + 10},25`;
-            
-            return { path: d, endX: endX + 10 };
-        }
+  /* ── 테마 (§11 — 스위치는 html[data-theme] 하나) ── */
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem('ssv-theme', t); } catch (e) { }
+    const next = t === 'dark' ? '라이트' : '다크', b = $('#themeBtn');
+    b.setAttribute('aria-label', `${next} 모드로 전환 (D)`); b.setAttribute('title', `${next} 모드로 전환 (D)`);
+    b.innerHTML = icon(t === 'dark' ? 'moon' : 'sun');
+    const mt = $('#metaTheme'); if (mt) mt.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--surface-1').trim());
+    themeHooks.forEach(f => f(t));
+  }
+  const toggleTheme = () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
 
-        // 화살표 스타일 업데이트 (Reusable logic)
-        function updateArrowStyle(groupElement, color, scale) {
-            // Fill colors
-            const heads = groupElement.querySelectorAll('.arrow-head');
-            const bodies = groupElement.querySelectorAll('.arrow-body');
-            const effects = groupElement.querySelectorAll('.arrow-effect');
-            const texts = groupElement.querySelectorAll('.arrow-text');
-            
-            heads.forEach(el => el.setAttribute('fill', color));
-            bodies.forEach(el => el.setAttribute('fill', color));
-            effects.forEach(el => el.setAttribute('stroke', color));
-            texts.forEach(el => el.setAttribute('fill', color));
+  /* ── 전체화면 ── */
+  function toggleFull() {
+    const d = document;
+    if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen(); return; }
+    const r = d.documentElement;
+    if (!r.requestFullscreen || d.fullscreenEnabled === false) { toast('이 브라우저에서는 전체화면을 지원하지 않습니다', { error: true }); return; }
+    r.requestFullscreen().catch(() => toast('전체화면으로 바꾸지 못했어요. 다시 눌러 보세요.', { error: true }));
+  }
+  function syncFull() {
+    const on = !!document.fullscreenElement, b = $('#fullBtn');
+    document.body.classList.toggle('fs', on);
+    b.innerHTML = icon(on ? 'fsOut' : 'fsIn');
+    const l = on ? '전체화면 나가기 (F · Esc)' : '전체화면 (F)';
+    b.setAttribute('aria-label', l); b.setAttribute('title', l);
+  }
 
-            return scale; // Just returns scale for external transform usage if needed
-        }
-
-        // --- Main Update Function ---
-        function updateVisuals() {
-            const color = getColor(force);
-            const scale = 0.8 + (force / 200);
-
-            // 0. Global Text
-            forceDisplay.innerText = `${force}N`;
-
-            // 1. Shape (Spring)
-            const springData = generateSpringPath(force);
-            springPath.setAttribute('d', springData.path);
-            
-            // Spring Arrow Position & Rotation (180 deg = left)
-            const springArrowX = springData.endX;
-            springArrowGroup.setAttribute('transform', `translate(${springArrowX}, 25) rotate(180) scale(${scale})`);
-            updateArrowStyle(springArrowGroup, color, scale);
-            
-            // Text Label position
-            springTextLabel.setAttribute('x', springData.endX + 15);
-            springTextLabel.setAttribute('fill', color);
-
-            // Compression Text
-            springCompressionText.innerText = `${Math.round(force * 0.6)}%`;
-            springCompressionText.style.color = color;
-
-            // 2. Direction (Trajectory)
-            const pathEndY = 50 - (force * 0.4);
-            const dCurve = `M 10,50 Q 50,${50} 90,${pathEndY}`;
-            trajectoryPath.setAttribute('d', dCurve);
-            trajectoryBall.setAttribute('cy', pathEndY);
-
-            // Trajectory Arrow Position & Rotation (-90 deg = up)
-            if (force > 0) {
-                trajectoryArrowGroup.style.display = 'inline';
-                trajectoryArrowGroup.setAttribute('transform', `translate(50, 53) rotate(-90) scale(${scale})`);
-                updateArrowStyle(trajectoryArrowGroup, color, scale);
-            } else {
-                trajectoryArrowGroup.style.display = 'none';
-            }
-
-            // Curve Text
-            trajectoryCurveText.innerText = force;
-            trajectoryCurveText.style.color = color;
-
-            // 3. Speed (Ball)
-            // Note: Position is handled by animation loop, here we update visuals dependent on force
-            const speedVal = Math.round(10 + force * 1.5);
-            speedValueText.innerText = `${speedVal} km/h`;
-            speedValueText.style.color = color;
-
-            // Speed Tail Size
-            tail1.style.width = `${10 + force * 0.4}px`;
-            tail2.style.width = `${6 + force * 0.3}px`;
-
-            // Speed Arrow (Initial position)
-            // Arrow points right (0 deg)
-            speedArrowGroup.setAttribute('transform', `translate(30, 20) rotate(0) scale(${scale})`);
-            updateArrowStyle(speedArrowGroup, color, scale);
-        }
-
-        // --- Animation Logic ---
-        function animate() {
-            if (!isAnimating) return;
-
-            const step = 0.5 + (force / 100) * 2.5;
-            speedProgress += step;
-            
-            if (speedProgress >= 100) {
-                speedProgress = 0; // Loop
-            }
-
-            // Move Ball
-            speedBallContainer.style.left = `${speedProgress}%`;
-            
-            // Hide Arrow if moving past start
-            if (speedProgress > 10) {
-                speedArrowContainer.style.display = 'none';
-            } else {
-                speedArrowContainer.style.display = 'block';
-            }
-
-            animationFrameId = requestAnimationFrame(animate);
-        }
-
-        function startAnimation() {
-            if (isAnimating) return;
-            isAnimating = true;
-            btnPlay.classList.add('hidden');
-            btnStop.classList.remove('hidden');
-            speedTail.style.display = 'flex'; // Show tail
-            animate();
-        }
-
-        function stopAnimation() {
-            isAnimating = false;
-            cancelAnimationFrame(animationFrameId);
-            btnPlay.classList.remove('hidden');
-            btnStop.classList.add('hidden');
-            speedTail.style.display = 'none'; // Hide tail
-            // speedArrowContainer.style.display = 'block'; // Show arrow when stopped? (Optional, maybe keep it hidden if far away)
-        }
-
-        function resetAnimation() {
-            stopAnimation();
-            speedProgress = 0;
-            speedBallContainer.style.left = '0%';
-            speedArrowContainer.style.display = 'block';
-        }
-
-        // --- Event Listeners ---
-        slider.addEventListener('input', (e) => {
-            force = parseInt(e.target.value);
-            updateVisuals();
+  /* ── 대화상자 (네이티브 <dialog>) ── */
+  let lastTrigger = null;
+  function openModal(title, html, o = {}) {
+    const d = $('#modal');
+    if (d.open) d.close();
+    lastTrigger = document.activeElement;
+    d.classList.toggle('narrow', !!o.narrow);
+    $('#modalTitle').textContent = title;
+    $('#modalBody').innerHTML = html;
+    d.showModal();
+    if (o.onOpen) o.onOpen(d);
+    $('#modalBody').scrollTop = 0;
+  }
+  function openDrawer() {
+    const d = $('#drawer');
+    lastTrigger = document.activeElement;
+    $('#drawerBody').innerHTML = CFG.theory();
+    d.showModal();
+    $('#drawerBody').scrollTop = 0;
+    if (CFG.onTheoryOpen) CFG.onTheoryOpen($('#drawerBody'));
+  }
+  function openHelp() {
+    const h = CFG.help;
+    openModal('도움말', `<div class="help-doc">
+      <h3>이렇게 해 보세요</h3>${h.how}
+      <h3>단축키</h3><p class="keys"><kbd>F</kbd> 전체화면 · <kbd>D</kbd> 다크/라이트 · <kbd>H</kbd> 도움말 · <kbd>C</kbd> 결과 저장 · <kbd>Esc</kbd> 창 닫기·전체화면 나가기${h.keys ? '<br>' + h.keys : ''}</p>
+      <h3>결과 저장</h3><p>장면 오른쪽 위 <b>결과 저장</b>(또는 <kbd>C</kbd>)을 누르면 지금 보이는 장면과 그 순간의 조건·값이 담긴 PNG 한 장이 기기의 다운로드 폴더에 저장돼요(iPad는 저장 확인 창이 떠요).</p>
+      <h3>모형의 조건과 한계</h3>${h.model}
+      <h3>출처와 제작</h3>${h.source}
+      <h3>기록 지우기</h3><p>실험 기록과 진행 상태는 이 탭에만 남고, 탭을 닫으면 지워져요.${h.local ? ' ' + h.local : ''}</p>
+      <button class="btn" id="wipeBtn">${icon('trash')}이 실험실의 기록 모두 지우기</button>
+      <div class="brandblock">🧪 송쌤과학 (Song Ssaem Science)<br>ⓒ 2026 송세호 | 아주중학교<br>📺 YouTube: <a href="${CHANNELS.yt}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)">@songsamscience</a>&nbsp; 📷 Instagram: <a href="${CHANNELS.ig}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 인스타그램 (새 창)">@songsamscience</a><br>⚠ 무단 복제·상업적 이용 금지</div>
+      <p class="ver-line">v${CFG.version} · ${CFG.date}</p></div>`, {
+      onOpen: () => {
+        $('#wipeBtn').onclick = () => openModal('기록을 모두 지울까요?', `<p>${h.wipe || '이 실험실의 기록과 진행 상태'}가 모두 지워져요. 테마 설정은 남아요.</p>
+          <div class="dialog-actions"><button class="btn" data-close>그대로 두기</button><button class="btn primary" id="wipeYes">모두 지우기</button></div>`, {
+          narrow: true, onOpen: () => {
+            $('#wipeYes').onclick = () => {
+              store.clear();
+              if (CFG.onWipe) CFG.onWipe();
+              $('#modal').close(); toast('기록을 모두 지웠어요.');
+            };
+          },
         });
+      },
+    });
+  }
 
-        btnPlay.addEventListener('click', startAnimation);
-        btnStop.addEventListener('click', stopAnimation);
-        btnReset.addEventListener('click', resetAnimation);
+  /* ── 결과 저장 (§11): SVG 장면 복제 → 계산된 스타일 인라인 → 이미지 → 캔버스 + 정보 띠 → PNG ── */
+  const INLINE_PROPS = ['fill', 'fill-opacity', 'fill-rule', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'opacity', 'font-family', 'font-size', 'font-weight', 'font-style', 'text-anchor', 'dominant-baseline', 'paint-order', 'stop-color', 'stop-opacity', 'display', 'visibility', 'letter-spacing', 'font-variant-numeric', 'mix-blend-mode', 'filter', 'clip-path', 'mask', 'transform', 'transform-origin', 'transform-box'];
+  function inlineTree(src, dst) {
+    if (src.nodeType !== 1) return;
+    const cs = getComputedStyle(src);
+    let st = '';
+    for (const p of INLINE_PROPS) {
+      const v = cs.getPropertyValue(p);
+      if (p === 'transform' && (v === 'none' || !src.style.transform)) continue;   // CSS transform만 옮긴다(속성 transform은 그대로 있음)
+      if ((p === 'transform-origin' || p === 'transform-box') && !src.style.transform) continue;
+      if (v !== '' && v !== 'normal' && v !== 'none' || p === 'fill' || p === 'stroke' || (p === 'display' && v === 'none')) st += `${p}:${v};`;   // 숨긴 요소는 PNG에서도 숨긴다
+    }
+    dst.setAttribute('style', st); dst.removeAttribute('class');
+    const a = src.children, b = dst.children;
+    for (let i = 0; i < a.length && i < b.length; i++) inlineTree(a[i], b[i]);
+  }
+  function svgToImage(svg, outW, vbOverride) {
+    const clone = svg.cloneNode(true);
+    inlineTree(svg, clone);
+    clone.querySelectorAll('[data-noexport]').forEach(e => e.remove());
+    clone.querySelectorAll('[tabindex]').forEach(e => e.removeAttribute('tabindex'));
+    const vb = vbOverride || svg.viewBox.baseVal;
+    const outH = Math.round(outW * vb.height / vb.width);
+    clone.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.width} ${vb.height}`);
+    clone.setAttribute('width', outW); clone.setAttribute('height', outH); clone.setAttribute('xmlns', NS);
+    clone.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    const data = new XMLSerializer().serializeToString(clone);
+    const url = URL.createObjectURL(new Blob([data], { type: 'image/svg+xml;charset=utf-8' }));
+    return new Promise((ok, no) => { const img = new Image(); img.onload = () => { URL.revokeObjectURL(url); ok({ img, w: outW, h: outH }); }; img.onerror = e => { URL.revokeObjectURL(url); no(e); }; img.src = url; });
+  }
+  function wrapText(ctx, text, maxW) {
+    const words = String(text).split(' '), lines = []; let line = '';
+    for (const w of words) { const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
+    if (line) lines.push(line);
+    return lines;
+  }
+  const p2 = n => String(n).padStart(2, '0');
+  async function capture() {
+    const btn = $('#saveBtn');
+    if (!btn || btn.offsetParent === null || btn.getAttribute('aria-busy') === 'true') return;
+    const cap = CFG.capture && CFG.capture();
+    if (!cap || !cap.svg) return;
+    btn.setAttribute('aria-busy', 'true');
+    const slow = setTimeout(() => toast('결과 이미지를 만드는 중이에요…'), 700);
+    try {
+      const css = getComputedStyle(document.documentElement), tok = n => css.getPropertyValue(n).trim();
+      const svg = cap.svg, vb = cap.viewBox || svg.viewBox.baseVal;
+      const r = svg.getBoundingClientRect(), fit = Math.min(r.width / svg.viewBox.baseVal.width, r.height / svg.viewBox.baseVal.height);
+      const outW = Math.round(Math.min(2400, Math.max(1200, vb.width * fit * 2)));
+      const g = await svgToImage(svg, outW, cap.viewBox);
+      const cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+      const k = outW / 1200, pad = 28 * k, font = n => `${n}px 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif`;
+      ctx.font = `500 ${font(17 * k)}`;
+      const rightW = 300 * k, textW = outW - pad * 3 - rightW;
+      const condL = wrapText(ctx, cap.cond, textW), stateL = wrapText(ctx, cap.state, textW);
+      const bandH = pad * 2 + 50 * k + (condL.length + stateL.length) * 26 * k;
+      cv.width = outW; cv.height = Math.round(g.h + bandH);
+      ctx.fillStyle = tok(cap.bg || '--stage'); ctx.fillRect(0, 0, outW, g.h);
+      ctx.drawImage(g.img, 0, 0, g.w, g.h);
+      ctx.fillStyle = tok('--surface-1'); ctx.fillRect(0, g.h, outW, cv.height - g.h);
+      ctx.fillStyle = tok('--line-2'); ctx.fillRect(0, g.h, outW, Math.max(1, k));
+      let y = g.h + pad + 14 * k;
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = tok('--text-2'); ctx.font = `600 ${font(14 * k)}`; ctx.fillText('실험 결과 · 송쌤과학 가상실험실', pad, y);
+      y += 30 * k; ctx.fillStyle = tok('--text-1'); ctx.font = `800 ${font(22 * k)}`; ctx.fillText(cap.title || CFG.title, pad, y);
+      ctx.font = `500 ${font(17 * k)}`; ctx.fillStyle = tok('--text-1');
+      for (const l of condL) { y += 26 * k; ctx.fillText(l, pad, y); }
+      ctx.fillStyle = tok('--text-2');
+      for (const l of stateL) { y += 26 * k; ctx.fillText(l, pad, y); }
+      const now = new Date();
+      ctx.textAlign = 'right'; let ry = g.h + pad + 30 * k; const rx = outW - pad;
+      ctx.fillStyle = tok('--text-2'); ctx.font = `500 ${font(15 * k)}`;
+      ctx.fillText(`${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())} ${p2(now.getHours())}:${p2(now.getMinutes())}`, rx, ry); ry += 26 * k;
+      ctx.fillText('© 송쌤과학 · @songsamscience', rx, ry);
+      ctx.textAlign = 'left';
+      const blob = await new Promise(ok => cv.toBlob(ok, 'image/png'));
+      if (!blob) throw new Error('blob');
+      const fname = `${CFG.file}_실험결과_${now.getFullYear()}${p2(now.getMonth() + 1)}${p2(now.getDate())}-${p2(now.getHours())}${p2(now.getMinutes())}.png`.replace(/[\\/:*?"<>|\s]/g, '');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+      window.__lastCapture = { name: fname, w: cv.width, h: cv.height, url: cv.toDataURL('image/png') };
+      if (!REDUCED && cap.flashEl) { const f = document.createElement('div'); f.className = 'shutter'; cap.flashEl.appendChild(f); setTimeout(() => f.remove(), 340); }
+      toast(`실험 결과를 PNG로 저장했어요 — ${fname}`);
+    } catch (e) {
+      console.error(e);
+      toast('이미지로 저장하지 못했어요. 기기의 화면 캡처를 이용해 주세요.', { error: true });
+    } finally { clearTimeout(slow); btn.removeAttribute('aria-busy'); }
+  }
 
-        // --- Init ---
-        updateVisuals();
-        speedArrowContainer.style.display = 'block'; // Ensure visible on start
+  /* ── 애니메이션 루프: rAF + 델타 타임, 탭이 숨으면 멈춤 ── */
+  function loop(step) {
+    let last = 0, id = 0, on = true;
+    const f = t => { if (!on) return; const dt = last ? Math.min(0.05, (t - last) / 1000) : 0; last = t; step(dt); id = requestAnimationFrame(f); };
+    const vis = () => { if (document.hidden) { cancelAnimationFrame(id); last = 0; } else if (on) { last = 0; id = requestAnimationFrame(f); } };
+    document.addEventListener('visibilitychange', vis);
+    id = requestAnimationFrame(f);
+    return { stop() { on = false; cancelAnimationFrame(id); document.removeEventListener('visibilitychange', vis); } };
+  }
 
-    </script>
+  /* ── SVG 작은 도구 ── */
+  function el(tag, attrs = {}, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) if (attrs[k] != null) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  /* 화면 좌표 → SVG 좌표 */
+  function svgPoint(svg, x, y) { const p = svg.createSVGPoint(); p.x = x; p.y = y; return p.matrixTransform(svg.getScreenCTM().inverse()); }
+
+  /* ── 초기화 ── */
+  function init(cfg) {
+    CFG = cfg;
+    $('#brandIc').innerHTML = icon('flask');
+    $('#yt').innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS.yt}</svg>`;
+    $('#ig').innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS.ig}</svg>`;
+    $('#yt').href = CHANNELS.yt; $('#ig').href = CHANNELS.ig;
+    $('#bookBtn').innerHTML = icon('book');
+    $('#helpBtn').innerHTML = icon('help');
+    $$('[data-close]').forEach(b => { if (!b.innerHTML.trim()) b.innerHTML = icon('x'); });
+    const sb = $('#saveBtn'); if (sb) sb.innerHTML = `${icon('camera')}<span class="save-l">결과 저장</span>`;
+    applyTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+    syncFull();
+    document.addEventListener('fullscreenchange', () => { syncFull(); if (CFG.onResize) requestAnimationFrame(CFG.onResize); });
+    $('#themeBtn').addEventListener('click', toggleTheme);
+    $('#fullBtn').addEventListener('click', toggleFull);
+    $('#helpBtn').addEventListener('click', openHelp);
+    $('#bookBtn').addEventListener('click', openDrawer);
+    if (sb) sb.addEventListener('click', capture);
+    $('#dHelp').addEventListener('click', () => { $('#drawer').close(); openHelp(); });
+    document.addEventListener('click', e => {
+      const c = e.target.closest('[data-close]'); if (c) { const d = c.closest('dialog'); if (d) d.close(); }
+    });
+    ['modal', 'drawer'].forEach(id => {
+      const d = $('#' + id);
+      d.addEventListener('close', () => { if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll: true }); });
+      d.addEventListener('click', e => { if (e.target === d) d.close(); });   // 스크림(바깥) 누르면 닫기
+    });
+    document.addEventListener('keydown', e => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      if (t.closest && t.closest('input:not([type="range"]),textarea,select,[contenteditable="true"]')) return;
+      const k = e.key.toLowerCase();
+      const inDialog = $('#modal').open || $('#drawer').open;
+      if (k === 'f') { e.preventDefault(); toggleFull(); }
+      else if (k === 'd') { e.preventDefault(); toggleTheme(); }
+      else if (k === 'h') { e.preventDefault(); if ($('#modal').open) $('#modal').close(); else openHelp(); }
+      else if (k === 'c' && !inDialog) { e.preventDefault(); capture(); }
+      else if (CFG.onKey && !inDialog) CFG.onKey(e);
+    });
+    let rz = 0;
+    addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => CFG.onResize && CFG.onResize()); });
+  }
+
+  return { $, $$, NS, CHANNELS, REDUCED, ICONS, icon, esc, store, announce, toast, applyTheme, toggleTheme, openModal, openHelp, openDrawer, capture, loop, el, svgPoint, init, onTheme: f => themeHooks.push(f) };
+})();
+
+/* ═══════ 이 실험실 ═══════ */
+/* ───────── 힘의 크기와 물체의 변화 — 에어 테이블 위 퍽 밀기 · 자 휘기 ───────── */
+const APP_VERSION = '2.0', APP_DATE = '2026-10-01';
+const { $, $$, el, icon, toast, announce, store } = SS;
+
+/* ── 과학 진실층: 모형 값 ── */
+const M = 1.0;            // 퍽 질량 (kg)
+const V0 = 1.0;           // 움직이는 중일 때 처음 속력 (m/s)
+const PUSH_T = 0.4;       // 힘을 주는 시간 (s)
+const STROBE = 0.2;       // 점을 찍는 간격 (s)
+const TW = 320, TH = 160, PR = 5;             // 에어 테이블 안쪽 320×160 cm · 퍽 반지름 5 cm
+const X_PUSH = 150, Y0 = 45, X_START = 30;    // 힘을 주는 자리 · 출발 자리 (cm)
+const AS = 8;             // 화살표 설명 레이어: 1 N = 8 cm
+const FMAX = 5;
+/* 자 휘기: 탁자 밖으로 나온 길이 20 cm, 끝을 누르면 끝이 내려간 거리 ∝ 힘 (작게 휘는 범위) */
+const RULER_L = 20, SAG_PER_N = 4.4;          // cm, cm/N (폭 3 cm·두께 2 mm 아크릴 자 추정값)
+const AS2 = 8;            // 자 휘기 화살표: 1 N = 8 cm
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const f1 = v => (Math.round(v * 10) / 10).toFixed(1);
+const deg = r => r * 180 / Math.PI;
+
+/* ── 상태 ── */
+const DIRS = { fwd: '운동 방향', back: '반대 방향', side: '옆으로', turn: '늘 옆으로(줄)' };
+let tab = store.get('tab', 'motion');
+let C = Object.assign({ v0: 1, d: 'fwd', F: 3 }, store.get('cond', {}));
+let book = store.get('book', { speed: null, dir: null, both: null });
+let showGhost = store.get('ghost', true);
+let runs = store.get('runs', []);            // 최근 두 번의 시도 [{cond, dots, v0v, v1v, kind}] — 결과·직전 고스트
+let trial = null;
+let P = Object.assign({ F: 0, pts: [], ghost: null }, store.get('press', {}));
+let sag = SAG_PER_N * P.F;                   // 지금 자 끝이 내려간 거리(cm) — 목표값을 짧게 따라간다
+function save() { store.set('tab', tab); store.set('cond', C); store.set('book', book); store.set('ghost', showGhost); store.set('runs', runs); store.set('press', P); }
+
+/* ═════════ 에어 테이블 장면 ═════════ */
+const svgM = $('#sceneM'), svgS = $('#sceneS');
+const T = (x, y) => [x, TH - y];                    // 테이블 좌표(cm, 위가 +) → SVG
+let pxuM = 3, pxuS = 20;
+function buildM() {
+  const g = $('#mTable');
+  el('rect', { x: -8, y: -8, width: TW + 16, height: TH + 16, rx: 5, class: 'rail' }, g);
+  el('rect', { x: 0, y: 0, width: TW, height: TH, class: 'tbl' }, g);
+  el('rect', { x: 0, y: 0, width: TW, height: TH, class: 'tbl-holes' }, g);
+  el('rect', { x: -.4, y: -.4, width: TW + .8, height: TH + .8, class: 'rail-hi' }, g);
+  const mk = $('#mMarks');
+  el('line', { x1: X_PUSH, y1: 3, x2: X_PUSH, y2: TH - 3, class: 'zone-line' }, mk);
+  el('text', { x: X_PUSH + 3, y: TH - 5, class: 'zone-t start' }, mk).textContent = '여기서 0.4초 동안 힘을 줘요';
+  el('text', { x: 0, y: TH + 13, class: 'legend' }, mk).textContent = '점 사이 0.2초 · 공기 구멍 간격 10 cm';
+  el('text', { x: TW, y: TH + 13, class: 'legend end' }, mk).textContent = '위에서 본 에어 테이블';
+  const pk = $('#mPuck');
+  el('ellipse', { id: 'pkSh', rx: PR * 1.02, ry: PR * .9, class: 'puck-shadow' }, pk);
+  el('circle', { id: 'pk', r: PR, class: 'puck' }, pk);
+  el('circle', { id: 'pkCap', r: PR * .42, class: 'puck-cap' }, pk);
+  const ar = $('#mArrow');
+  el('line', { id: 'strLine', class: 'string' }, ar);
+  el('circle', { id: 'strPin', r: 1.3, class: 'pin' }, ar);
+  el('circle', { id: 'plan', r: PR, class: 'puck-plan' }, ar);
+  el('line', { id: 'fb', class: 'f-body' }, ar);
+  el('path', { id: 'ft', class: 'f-tick' }, ar);
+  el('path', { id: 'fh', class: 'f-head' }, ar);
+  el('text', { id: 'fl', class: 'f-label' }, ar);
+}
+/* 힘의 방향 벡터(단위): u는 퍽이 움직이는 쪽 */
+function forceDir(d, u, vNow) {
+  if (d === 'fwd') return u;
+  if (d === 'back') return [-u[0], -u[1]];
+  if (d === 'side') return [-u[1], u[0]];                         // 처음 운동 방향에 수직(위쪽), 방향 고정
+  const s = Math.hypot(vNow[0], vNow[1]) || 1;                    // 늘 지금 운동 방향에 수직(줄이 당김)
+  return [-vNow[1] / s, vNow[0] / s];
+}
+function newTrial() {
+  const moving = C.v0 > 0;
+  const tr = { phase: moving ? 'approach' : 'push', t: 0, tp: 0, tc: 0, x: moving ? X_START : X_PUSH, y: Y0, vx: moving ? V0 * 100 : 0, vy: 0, dots: [], nextDot: 0, cond: { ...C }, u0: [1, 0], v0v: [moving ? V0 : 0, 0], v1v: null, turnS: 0, pin: null };
+  if (!moving) startPush(tr);
+  return tr;
+}
+function startPush(tr) {
+  const s = Math.hypot(tr.vx, tr.vy);
+  tr.u0 = s > 1e-9 ? [tr.vx / s, tr.vy / s] : [1, 0];
+  tr.phase = 'push'; tr.tp = 0; tr.turnS = s; tr.sMin = s / 100; tr.sMax = s / 100;
+  if (tr.cond.d === 'turn' && tr.cond.F > 0 && s > 0) {            // 줄 반지름 R = m v² / F
+    const R = M * (s / 100) ** 2 / tr.cond.F * 100, n = [-tr.u0[1], tr.u0[0]];
+    tr.pin = [tr.x + n[0] * R, tr.y + n[1] * R, R];
+  }
+}
+function stepTrial(tr, dt) {
+  const n = Math.max(1, Math.ceil(dt * 480)), h = dt / n;
+  for (let i = 0; i < n && tr.phase !== 'done'; i++) {
+    if (tr.t >= tr.nextDot - 1e-9) { tr.dots.push({ x: tr.x, y: tr.y, k: tr.phase === 'approach' ? 'b' : tr.phase === 'push' ? 'p' : 'a' }); tr.nextDot += STROBE; }
+    if (tr.phase === 'approach') {
+      tr.x += tr.vx * h;
+      if (tr.x >= X_PUSH) { tr.x = X_PUSH; startPush(tr); }
+    } else if (tr.phase === 'push') {
+      const f = forceDir(tr.cond.d, tr.u0, [tr.vx, tr.vy]), a = tr.cond.F / M * 100;   // cm/s²
+      tr.vx += f[0] * a * h; tr.vy += f[1] * a * h;
+      if (tr.cond.d === 'turn') { const s = Math.hypot(tr.vx, tr.vy) || 1; tr.vx *= tr.turnS / s; tr.vy *= tr.turnS / s; }  // 줄은 속력을 바꾸지 않는다
+      tr.x += tr.vx * h; tr.y += tr.vy * h; tr.tp += h;
+      { const sp = Math.hypot(tr.vx, tr.vy) / 100; if (sp < tr.sMin) tr.sMin = sp; if (sp > tr.sMax) tr.sMax = sp; }
+      if (tr.tp >= PUSH_T - 1e-9) { tr.phase = 'coast'; tr.v1v = [tr.vx / 100, tr.vy / 100]; finishPush(tr); }
+    } else {
+      tr.x += tr.vx * h; tr.y += tr.vy * h; tr.tc += h;
+      const hit = tr.x - PR < 0 || tr.x + PR > TW || tr.y - PR < 0 || tr.y + PR > TH;
+      if (hit) { tr.x = clamp(tr.x, PR, TW - PR); tr.y = clamp(tr.y, PR, TH - PR); tr.phase = 'done'; }
+      else if (tr.tc > 4 || (Math.hypot(tr.vx, tr.vy) < 1e-6 && tr.tc > 1.2)) tr.phase = 'done';
+    }
+    tr.t += h;
+  }
+  if (tr.phase === 'done') endTrial(tr);
+}
+/* 힘을 받는 동안의 변화로 분류한다 — 되돌아온 퍽은 처음·나중 속력이 같아도 도중에 속력이 0까지 변했다 */
+function classify(v0v, v1v, sMin = null, sMax = null) {
+  const s0 = Math.hypot(...v0v), s1 = Math.hypot(...v1v);
+  const speedCh = Math.abs(s1 - s0) >= .05 || (sMin != null && sMin < s0 - .05) || (sMax != null && sMax > s0 + .05);
+  let ang = null;
+  if (s0 > 1e-6 && s1 > 1e-6) ang = deg(Math.acos(clamp((v0v[0] * v1v[0] + v0v[1] * v1v[1]) / (s0 * s1), -1, 1)));
+  const dirCh = ang != null && ang >= 1;
+  return { s0, s1, ang, sMin, kind: speedCh && dirCh ? 'both' : speedCh ? 'speed' : dirCh ? 'dir' : 'none' };
+}
+function finishPush(tr) {
+  const c = classify(tr.v0v, tr.v1v, tr.sMin, tr.sMax);
+  tr.cls = c;
+  const rec = { cond: tr.cond, v0v: tr.v0v, v1v: tr.v1v, cls: c, dots: null };
+  runs.push(rec); if (runs.length > 2) runs = runs.slice(-2);
+  if (c.kind !== 'none' && !book[c.kind]) { book[c.kind] = { ...tr.cond }; toast(`변화 도감: ‘${BOOK[c.kind].name}’을 찾았어요`); }
+  save(); renderResult(); renderBook();
+  announce(`${KIND[c.kind]}. 속력 ${f1(c.s0)}에서 ${f1(c.s1)} 미터 매 초.`);
+}
+function endTrial(tr) {
+  const r = runs[runs.length - 1]; if (r && !r.dots) { r.dots = tr.dots.map(d => [Math.round(d.x * 10) / 10, Math.round(d.y * 10) / 10, d.k]); r.end = [tr.x, tr.y]; }
+  trial = null; save(); renderM(); syncDeck();
+}
+
+/* ── 그리기 ── */
+function drawArrow(ids, x, y, u, F, scale, tick, label) {
+  const [sx, sy] = T(x, y), L = F * scale, ux = u[0], uy = -u[1], head = Math.min(4.2, L * .45);
+  const tx = sx + ux * L, ty = sy + uy * L, bx = tx - ux * head, by = ty - uy * head, nx = -uy, ny = ux;
+  const b = $(ids[0]); b.setAttribute('x1', sx); b.setAttribute('y1', sy); b.setAttribute('x2', bx); b.setAttribute('y2', by);
+  let t = ''; for (let k = tick; k < F - 1e-6; k += tick) { const cx = sx + ux * k * scale, cy = sy + uy * k * scale; t += `M${cx + nx * 1.1} ${cy + ny * 1.1}L${cx - nx * 1.1} ${cy - ny * 1.1}`; }
+  $(ids[1]).setAttribute('d', t);
+  $(ids[2]).setAttribute('d', L > .01 ? `M${tx} ${ty}L${bx + nx * 2.2} ${by + ny * 2.2}L${bx - nx * 2.2} ${by - ny * 2.2}Z` : '');
+  const lb = $(ids[3]); lb.textContent = label;
+  const side = ny < 0 ? 1 : -1;
+  lb.setAttribute('x', tx + ux * 2 + nx * side * 5); lb.setAttribute('y', ty + uy * 2 + ny * side * 5 + 1.5);
+  lb.setAttribute('text-anchor', Math.abs(ux) < .4 ? 'start' : ux > 0 ? 'start' : 'end');
+}
+function renderM() {
+  // 직전 고스트
+  const gg = $('#mGhost'); gg.innerHTML = '';
+  const prev = trial && !trial.cls ? runs[runs.length - 1] : runs[runs.length - 2];   // 지금 시도의 기록은 빼고 그 직전
+  if (showGhost && prev && prev.dots) prev.dots.forEach(([x, y]) => { const [sx, sy] = T(x, y); el('circle', { cx: sx, cy: sy, r: 1.5, class: 'gdot' }, gg); });
+  // 이번 점
+  const gd = $('#mDots'); gd.innerHTML = '';
+  const dots = trial ? trial.dots : (runs.length && runs[runs.length - 1].dots ? runs[runs.length - 1].dots.map(([x, y, k]) => ({ x, y, k })) : []);
+  dots.forEach(d => { const [sx, sy] = T(d.x, d.y); el('circle', { cx: sx, cy: sy, r: 1.5, class: `dot-${d.k}` }, gd); });
+  // 퍽
+  let px, py;
+  if (trial) { px = trial.x; py = trial.y; }
+  else if (runs.length && runs[runs.length - 1].end) [px, py] = runs[runs.length - 1].end;
+  else { px = C.v0 > 0 ? X_START : X_PUSH; py = Y0; }
+  const [qx, qy] = T(px, py);
+  $('#pk').setAttribute('cx', qx); $('#pk').setAttribute('cy', qy);
+  $('#pkCap').setAttribute('cx', qx); $('#pkCap').setAttribute('cy', qy);
+  $('#pkSh').setAttribute('cx', qx + .9); $('#pkSh').setAttribute('cy', qy + 1.1);
+  // 힘 화살표: 미는 동안에는 퍽에, 그 밖에는 ‘힘을 주는 자리’에 계획으로
+  const pushing = trial && trial.phase === 'push';
+  const cond = trial ? trial.cond : C;
+  let ax = X_PUSH, ay = Y0, u = [1, 0], v = [1, 0];
+  if (pushing) { ax = trial.x; ay = trial.y; u = trial.u0; v = [trial.vx, trial.vy]; }
+  const fdir = cond.d === 'turn' && cond.v0 === 0 && !pushing ? [0, 1] : forceDir(cond.d, u, v);
+  const showArrow = cond.F > 0 && (pushing || !trial);
+  $('#mArrow').style.display = showArrow ? '' : 'none';
+  if (showArrow) drawArrow(['#fb', '#ft', '#fh', '#fl'], ax, ay, fdir, cond.F, AS, 1, `${f1(cond.F)} N`);
+  const plan = $('#plan'); plan.style.display = !trial && C.v0 > 0 ? '' : 'none';
+  { const [sx, sy] = T(X_PUSH, Y0); plan.setAttribute('cx', sx); plan.setAttribute('cy', sy); }
+  // 줄(늘 옆으로): 핀과 줄
+  const pin = pushing && trial.pin ? trial.pin : (!trial && C.d === 'turn' && C.v0 > 0 && C.F > 0 ? [X_PUSH, Y0 + M * V0 * V0 / C.F * 100] : null);
+  const sl = $('#strLine'), sp = $('#strPin');
+  if (pin && pin[1] < TH + 8) {
+    const [a, b] = T(pin[0], pin[1]), [c, d] = T(pushing ? trial.x : X_PUSH, pushing ? trial.y : Y0);
+    sl.setAttribute('x1', a); sl.setAttribute('y1', b); sl.setAttribute('x2', c); sl.setAttribute('y2', d); sp.setAttribute('cx', a); sp.setAttribute('cy', b);
+    sl.style.display = sp.style.display = '';
+  } else sl.style.display = sp.style.display = 'none';
+  renderTags();
+}
+function renderTags() {
+  const g = $('#mTags'); g.innerHTML = '';
+  const r = !trial ? runs[runs.length - 1] : (trial.phase === 'coast' ? runs[runs.length - 1] : null);
+  if (!r || !r.cls) return;
+  const c = r.cls, dots = trial ? trial.dots : (r.dots || []).map(([x, y, k]) => ({ x, y, k }));
+  // 처음 속력: 다가오는 점 위
+  const before = dots.filter(d => d.k === 'b');
+  if (before.length >= 2) { const m = before[Math.floor(before.length / 2)], [sx, sy] = T(m.x, m.y); el('text', { x: sx, y: sy - 5, class: 'v-t b', 'text-anchor': 'middle' }, g).textContent = `${f1(c.s0)} m/s`; }
+  // 나중 속력: 떠나는 점 옆
+  const after = dots.filter(d => d.k === 'a');
+  if (after.length >= 1 && c.s1 > .02) { const m = after[Math.min(after.length - 1, 2)], [sx, sy] = T(m.x, m.y); el('text', { x: sx + 4, y: sy - 5, class: 'v-t', 'text-anchor': 'start' }, g).textContent = `${f1(c.s1)} m/s`; }
+  // 방향이 꺾인 각: 힘을 준 뒤 떠나는 자리에서 처음 방향과 나중 방향 사이
+  if (c.ang != null && c.ang >= 1 && c.s1 > .02) {
+    const p = after.length ? after[0] : dots[dots.length - 1], [cx, cy] = T(p.x, p.y);
+    const a0 = Math.atan2(-r.v0v[1], r.v0v[0]), a1 = Math.atan2(-r.v1v[1], r.v1v[0]), R = 12;
+    el('line', { x1: cx, y1: cy, x2: cx + Math.cos(a0) * 26, y2: cy + Math.sin(a0) * 26, class: 'guide' }, g);
+    const sweep = ((a1 - a0 + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+    const ex = cx + Math.cos(a0 + sweep) * R, ey = cy + Math.sin(a0 + sweep) * R;
+    el('path', { d: `M${cx + Math.cos(a0) * R} ${cy + Math.sin(a0) * R}A${R} ${R} 0 ${Math.abs(sweep) > Math.PI ? 1 : 0} ${sweep > 0 ? 1 : 0} ${ex} ${ey}`, class: 'ang-arc' }, g);
+    const am = a0 + sweep / 2;
+    el('text', { x: cx + Math.cos(am) * (R + 7), y: cy + Math.sin(am) * (R + 7) + 1.5, class: 'ang-t', 'text-anchor': 'middle' }, g).textContent = `${Math.round(c.ang)}°`;
+  }
+}
+
+/* ═════════ 자 휘기 장면 ═════════ */
+const DESK_X = 20, TOP = 12, RT = .3;     // 탁자 끝 x · 탁자 윗면 y · 자 두께(그림)
+function buildS() {
+  const b = $('#sBack');
+  el('rect', { x: 0, y: 7, width: 52, height: 23, class: 'wall-bg' }, b);
+  el('rect', { x: -1, y: TOP, width: DESK_X + 1, height: 30 - TOP + 1, class: 'desk' }, b);
+  el('rect', { x: -1, y: TOP, width: DESK_X + 1, height: .35, style: 'fill:var(--desk-hi);opacity:.6' }, b);
+  el('g', { id: 'sScale' }, b);
+  el('text', { x: 1, y: 28.6, class: 's-cap' }, b).textContent = '옆에서 본 모습 · 30 cm 플라스틱 자, 탁자 밖 20 cm';
+  const f = $('#sFront');   // 죔쇠(C 클램프)
+  el('path', { d: `M13.2 ${TOP - RT - 1.5}H17.4V${TOP + 3.6}H13.2V${TOP + 2.9}H16.6V${TOP - RT - .8}H13.2Z`, class: 'clamp' }, f);
+  el('rect', { x: 14.3, y: TOP - RT - 1.1, width: 1.3, height: .8, class: 'clamp-lo' }, f);
+  el('rect', { x: 14.3, y: TOP + 2.4, width: 1.3, height: .6, class: 'clamp-lo' }, f);
+  el('rect', { x: 14.75, y: TOP + 3.6, width: .4, height: 2.2, class: 'clamp-lo' }, f);
+  el('rect', { x: 13.9, y: TOP + 5.8, width: 2.2, height: .5, rx: .2, class: 'clamp' }, f);
+  const a = $('#sArrow');
+  el('line', { id: 'sfb', class: 'sf-body' }, a); el('path', { id: 'sft', class: 'f-tick', style: 'stroke-width:.12' }, a); el('path', { id: 'sfh', class: 'sf-head' }, a); el('text', { id: 'sfl', class: 'sf-label' }, a);
+}
+function buildScale() {                               // 세워 둔 눈금자: 0 = 자 윗면 처음 높이. 작은 화면에서는 숫자를 2 cm마다
+  const sc = $('#sScale'); sc.innerHTML = '';
+  const X = 43.2, Y0s = TOP - RT, every = pxuS < 12 ? 2 : 1;
+  el('rect', { x: X, y: Y0s - 1.2, width: 2.6, height: 8.4, rx: .15, class: 'scale' }, sc);
+  for (let mm = 0; mm <= 60; mm++) {
+    if (pxuS < 12 && mm % 5) continue;
+    const y = Y0s + mm / 10, L = mm % 10 === 0 ? 1.1 : mm % 5 === 0 ? .75 : .45;
+    el('line', { x1: X, y1: y, x2: X + L, y2: y, class: 'scale-tick' }, sc);
+    if (mm % (10 * every) === 0) el('text', { x: X + 2.4, y, class: 'scale-t' }, sc).textContent = mm / 10;
+  }
+  el('text', { x: X + 1.3, y: Y0s - 1.9, class: 's-cap mid' }, sc).textContent = 'cm';
+}
+function rulerPath(s) {                                // s: 끝이 내려간 거리 cm → 자 윤곽(윗면·아랫면)
+  const top = [], bot = [];
+  const y = x => x <= DESK_X ? 0 : (() => { const u = (x - DESK_X) / RULER_L; return s * u * u * (3 - u) / 2; })();
+  for (let x = 4; x <= DESK_X + RULER_L + 1e-6; x += .5) { top.push([x, TOP - RT + y(x)]); bot.push([x, TOP + y(x)]); }
+  return { d: `M${top.map(p => p.join(' ')).join('L')}L${bot.reverse().map(p => p.join(' ')).join('L')}Z`, tipY: TOP - RT + s };
+}
+function renderS() {
+  const r = rulerPath(sag), g = $('#sRuler'); g.innerHTML = '';
+  el('path', { d: r.d, class: 'ruler' }, g);
+  let t = ''; for (let x = 5; x <= 39; x++) { const u = x > DESK_X ? (x - DESK_X) / RULER_L : 0, yy = TOP - RT + sag * u * u * (3 - u) / 2; t += `M${x} ${yy}v${x % 5 === 0 ? .22 : .12}`; }
+  el('path', { d: t, class: 'ruler-mark' }, g);
+  const gh = $('#sGhost'); gh.innerHTML = '';
+  if (P.ghost != null && Math.abs(P.ghost - P.F) > 1e-6) el('path', { d: rulerPath(SAG_PER_N * P.ghost).d, class: 's-ghost' }, gh);
+  // 내려간 거리 표시선
+  const tg = $('#sTags'); tg.innerHTML = '';
+  const tipX = DESK_X + RULER_L;
+  if (sag > .05) {
+    el('line', { x1: tipX, y1: r.tipY, x2: 43.2, y2: r.tipY, class: 'drop-line' }, tg);
+    el('line', { x1: tipX - 1.4, y1: TOP - RT, x2: tipX + .4, y2: TOP - RT, class: 'guide', style: 'stroke-width:.06;stroke-dasharray:.3 .25' }, tg);
+  }
+  // 누르는 힘 화살표: 작용점(자 끝 윗면)에서 아래로
+  const a = $('#sArrow'), F = P.F;
+  a.style.display = F > 0 ? '' : 'none';
+  if (F > 0) {
+    const x = tipX - .6, y0 = r.tipY, L = F * AS2, hd = Math.min(1.1, L * .4);
+    $('#sfb').setAttribute('x1', x); $('#sfb').setAttribute('y1', y0); $('#sfb').setAttribute('x2', x); $('#sfb').setAttribute('y2', y0 + L - hd);
+    $('#sfh').setAttribute('d', `M${x} ${y0 + L}L${x - .6} ${y0 + L - hd}L${x + .6} ${y0 + L - hd}Z`);
+    let tk = ''; for (let k = .2; k < F - 1e-6; k += .2) tk += `M${x - .3} ${y0 + k * AS2}H${x + .3}`;
+    $('#sft').setAttribute('d', tk);
+    const lb = $('#sfl'); lb.textContent = `${f1(F)} N`; lb.setAttribute('x', x - 1); lb.setAttribute('y', y0 + L * .6); lb.setAttribute('text-anchor', 'end');
+  }
+  $('#dropV').textContent = f1(sag);
+}
+function renderPlot() {
+  const s = $('#plot'); s.innerHTML = '';
+  const X0 = 30, Y0p = 112, W = 200, H = 96, xs = f => X0 + f * W, ys = d => Y0p - d / 5 * H;
+  for (let i = 0; i <= 5; i++) { el('line', { x1: X0, y1: ys(i), x2: X0 + W, y2: ys(i), class: 'p-grid' }, s); el('text', { x: X0 - 6, y: ys(i) + 4, class: 'p-t', 'text-anchor': 'end' }, s).textContent = i; }
+  for (let i = 0; i <= 5; i++) el('text', { x: xs(i / 5), y: Y0p + 15, class: 'p-t', 'text-anchor': 'middle' }, s).textContent = i === 5 ? '1 N' : (i / 5).toFixed(1);
+  el('line', { x1: X0, y1: Y0p, x2: X0 + W, y2: Y0p, class: 'p-axis' }, s); el('line', { x1: X0, y1: Y0p, x2: X0, y2: ys(5), class: 'p-axis' }, s);
+  el('text', { x: 4, y: 12, class: 'p-t' }, s).textContent = '내려간 거리(cm)';
+  if (P.pts.length >= 3) { const k = P.pts.reduce((a, p) => a + p[0] * p[1], 0) / P.pts.reduce((a, p) => a + p[0] * p[0], 0); el('line', { x1: xs(0), y1: ys(0), x2: xs(1), y2: ys(k), class: 'p-trend' }, s); }
+  P.pts.forEach(([f, d]) => el('circle', { cx: xs(f), cy: ys(d), r: 4, class: 'p-pt' }, s));
+  el('circle', { cx: xs(P.F), cy: ys(SAG_PER_N * P.F), r: 6, class: 'p-now' }, s);
+}
+
+/* ═════════ 덱(조건·결과·도감) ═════════ */
+const KIND = { speed: '속력만 변했어요', dir: '운동 방향만 변했어요', both: '속력과 운동 방향이 모두 변했어요', none: '운동 상태가 변하지 않았어요' };
+const BOOK = {
+  speed: { name: '속력만 변하는 운동', short: '속력만', eg: '출발하는 자동차 · 브레이크를 밟은 자전거' },
+  dir: { name: '방향만 변하는 운동', short: '방향만', eg: '회전목마 · 줄에 매달아 돌리는 공' },
+  both: { name: '속력과 방향이 모두 변하는 운동', short: '둘 다', eg: '비스듬히 던진 공 · 그네' },
+};
+const condText = c => `${c.v0 > 0 ? '움직이는 퍽' : '멈춘 퍽'} · ${DIRS[c.d]} · ${f1(c.F)} N`;
+function renderResult() {
+  const r = runs[runs.length - 1], k = $('#resKind');
+  if (!r) { k.className = 'res-kind idle'; k.textContent = '출발하면 결과가 여기에 나와요'; $('#resSpeed').textContent = '–'; $('#resDir').textContent = '–'; $('#resNote').textContent = ''; return; }
+  const c = r.cls; k.className = 'res-kind'; k.textContent = KIND[c.kind];
+  const rev = c.ang != null && c.ang > 179 && c.sMin != null && c.sMin < .05;
+  const sp = c.s0 < .02 && c.s1 >= .02 ? `0 → ${f1(c.s1)} m/s · 움직이기 시작` : c.s1 < .02 && c.s0 >= .02 ? `${f1(c.s0)} → 0 m/s · 멈춤` : rev ? `${f1(c.s0)} → 0 → ${f1(c.s1)} m/s · 멈췄다가 되돌아옴` : `${f1(c.s0)} → ${f1(c.s1)} m/s${Math.abs(c.s1 - c.s0) < .05 ? ' · 그대로' : c.s1 > c.s0 ? ' · 빨라짐' : ' · 느려짐'}`;
+  $('#resSpeed').textContent = sp;
+  $('#resDir').textContent = c.ang == null ? (c.s1 < .02 ? '멈춤' : '처음 방향 없음(멈춰 있었음)') : c.ang < 1 ? '처음과 같음' : c.ang > 179 ? '반대로 되돌아옴 (180°)' : `${Math.round(c.ang)}° 꺾임`;
+  // 직전과 비교: 조건 중 힘의 크기만 달랐다면 변화의 크기를 견준다
+  const p = runs.length >= 2 ? runs[0] : null;
+  let note = '';
+  if (p && p.cond.d === r.cond.d && p.cond.v0 === r.cond.v0 && p.cond.F !== r.cond.F) {
+    const bigger = r.cond.F > p.cond.F, useAng = r.cond.d === 'turn' || r.cond.d === 'side';
+    const m0 = useAng ? (p.cls.ang || 0) : Math.abs(p.cls.s1 - p.cls.s0), m1 = useAng ? (c.ang || 0) : Math.abs(c.s1 - c.s0);
+    const what = useAng ? '운동 방향이' : '속력이';
+    const v0s = useAng ? `${Math.round(m0)}°` : `${f1(m0)} m/s`, v1s = useAng ? `${Math.round(m1)}°` : `${f1(m1)} m/s`;
+    note = `직전(${f1(p.cond.F)} N)보다 힘이 ${bigger ? '커서' : '작아서'} ${what} ${m1 > m0 + 1e-6 ? '더 많이' : m1 < m0 - 1e-6 ? '더 적게' : '똑같이'} 변했어요 (${v0s} → ${v1s}).`;
+  } else if (c.kind === 'none') note = r.cond.v0 > 0 ? '힘을 주지 않았더니 같은 빠르기로 곧게 나아갔어요.' : '힘을 주지 않았더니 퍽이 그대로 멈춰 있어요.';
+  else if (!p) note = '힘의 크기만 바꿔 한 번 더 해 보면 변화의 크기를 비교할 수 있어요.';
+  else note = '방향이나 처음 상태가 달라요. 힘의 크기만 바꿔 비교해 볼까요?';
+  $('#resNote').textContent = note;
+}
+function renderBook() {
+  const n = ['speed', 'dir', 'both'].filter(k => book[k]).length;
+  $('#bookCount').textContent = `${n}/3`;
+  $('#book').innerHTML = ['speed', 'dir', 'both'].map(k => {
+    const b = book[k];
+    return `<li class="${b ? 'on' : ''}" title="${b ? `예: ${BOOK[k].eg}` : ''}"><span class="bk-ic">${b ? icon('check') : ''}</span><span class="bk-n">${BOOK[k].short}</span><span class="bk-d">${b ? condText(b) : '어떤 힘이면 될까요?'}</span></li>`;
+  }).join('') + (n === 3 ? `<li class="done-row"><p class="book-done">세 가지 운동을 모두 만들었어요. 예: ${BOOK.speed.eg.split(' · ')[0]}(속력만) · ${BOOK.dir.eg.split(' · ')[0]}(방향만) · ${BOOK.both.eg.split(' · ')[0]}(둘 다)</p><a class="textlink" href="${SS.CHANNELS.yt}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)"><svg class="ic yt-ic" viewBox="0 0 24 24" aria-hidden="true">${SS.ICONS.yt}</svg>유튜브에서 더 보기</a></li>` : '');
+}
+function syncDeck() {
+  $$('#startChips .chip').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v0 === C.v0)));
+  $$('#dirSeg button').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.d === C.d));
+    const dis = b.dataset.d === 'turn' && C.v0 === 0;
+    b.setAttribute('aria-disabled', String(dis)); b.title = dis ? '멈춰 있는 퍽은 줄로 돌릴 수 없어요 — 먼저 움직이게 해요' : '';
+  });
+  $('#magRng').value = C.F; $('#magV').textContent = f1(C.F); $('#magRng').setAttribute('aria-valuetext', `${f1(C.F)} N`);
+  const running = !!trial;
+  $('#goBtn').innerHTML = running ? `${icon('reset')}다시 출발` : `${icon('play')}${C.v0 > 0 ? '출발' : '힘 주기'}`;
+  $('#ghostTog').setAttribute('aria-pressed', String(showGhost));
+  $('#stageGoal').textContent = tab === 'motion' ? '힘의 방향과 크기를 고르고 출발해요 — 퍽이 어떻게 달라지는지 보세요' : '자 끝을 누르는 힘을 바꿔 자가 휘는 정도를 비교해요';
+}
+function setTab(t) {
+  tab = t; $('#lab').dataset.tab = t;
+  $$('#tabSeg [role=tab]').forEach(b => { b.setAttribute('aria-selected', String(b.dataset.tab === t)); b.tabIndex = b.dataset.tab === t ? 0 : -1; });
+  $('#stage').setAttribute('aria-labelledby', t === 'motion' ? 'tabMotion' : 'tabShape');
+  svgM.toggleAttribute('hidden', t !== 'motion'); svgS.toggleAttribute('hidden', t !== 'shape');   // SVG 요소에는 .hidden 속성이 없다
+  $('#deckM').hidden = t !== 'motion'; $('#deckS').hidden = t !== 'shape';
+  save(); syncDeck(); sizeText();
+}
+function go() {
+  if (C.d === 'turn' && C.v0 === 0) { toast('멈춰 있는 퍽은 줄로 돌릴 수 없어요. 처음 상태를 ‘움직이는 중’으로 바꿔 주세요.'); return; }
+  if (trial && trial.cls) { const r = runs[runs.length - 1]; if (r && !r.dots) { r.dots = trial.dots.map(d => [Math.round(d.x * 10) / 10, Math.round(d.y * 10) / 10, d.k]); r.end = [trial.x, trial.y]; } }
+  trial = newTrial(); syncDeck(); renderM();
+}
+
+/* ── 크기 조절 ── */
+function sizeText() {
+  const set = (svg, vbw, vbh, k) => {
+    const r = svg.getBoundingClientRect(); if (!r.width) return 0;
+    const p = Math.min(r.width / vbw, r.height / vbh);
+    for (const n of [12, 13, 15]) svg.style.setProperty(`--t${n}`, `${(n / p).toFixed(3)}px`);
+    svg.style.setProperty('--h3', `${(3 / p).toFixed(3)}px`);
+    return p;
+  };
+  pxuM = set(svgM, 344, 188) || pxuM; pxuS = set(svgS, 52, 23) || pxuS;
+  buildScale(); renderM(); renderS();
+}
+function step(dt) {
+  if (trial) { stepTrial(trial, dt); if (trial) renderM(); }
+  const target = SAG_PER_N * P.F;
+  if (Math.abs(sag - target) > 1e-4) { sag += (target - sag) * (1 - Math.exp(-dt / .07)); if (Math.abs(sag - target) < .004) sag = target; renderS(); }
+}
+
+/* ── 자 누르기 ── */
+function setPress(F, commit) {
+  F = clamp(Math.round(F * 10) / 10, 0, 1);
+  if (commit && F !== P.F) P.ghost = P.F;
+  P.F = F;
+  $('#pressRng').value = F; $('#pressV').textContent = f1(F); $('#pressRng').setAttribute('aria-valuetext', `${f1(F)} N`);
+  if (commit && F > 0 && !P.pts.some(p => Math.abs(p[0] - F) < 1e-6)) { P.pts.push([F, +(SAG_PER_N * F).toFixed(2)]); P.pts.sort((a, b) => a[0] - b[0]); }
+  if (commit) {
+    const n = $('#shapeNote');
+    if (F === 0) n.textContent = '손을 떼자 자가 처음처럼 곧게 돌아왔어요.';
+    else if (P.ghost != null && P.ghost > 0) n.textContent = `${f1(P.ghost)} N → ${f1(F)} N: 자 끝이 ${f1(SAG_PER_N * P.ghost)} cm에서 ${f1(SAG_PER_N * F)} cm로 ${F > P.ghost ? '더 많이' : '덜'} 내려갔어요.`;
+    else n.textContent = `${f1(F)} N으로 누르자 자 끝이 ${f1(SAG_PER_N * F)} cm 내려갔어요.`;
+    save();
+  }
+  renderS(); renderPlot();
+}
+
+/* ═════════ 원리 카드 · 도움말 ═════════ */
+function strobeFig(kind) {
+  const pts = [];
+  if (kind === 'speed') { for (let i = 0; i < 5; i++) pts.push([10 + i * 10, 30]); for (let i = 1; i <= 3; i++) pts.push([50 + i * 18, 30]); }
+  if (kind === 'dir') { for (let i = 0; i < 5; i++) pts.push([10 + i * 10, 34]); for (let i = 1; i <= 4; i++) { const a = i * .38; pts.push([50 + Math.sin(a) * 26, 34 - (1 - Math.cos(a)) * 26]); } }
+  if (kind === 'both') { for (let i = 0; i < 5; i++) pts.push([10 + i * 10, 34]); for (let i = 1; i <= 3; i++) pts.push([50 + i * 12, 34 - i * i * 3.2]); }
+  return pts.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="2.4" style="fill:${i < 5 ? 'var(--dot-before)' : 'var(--dot-after)'}"/>`).join('');
+}
+function theory() {
+  const r = runs[runs.length - 1];
+  return `<article class="tcard"><h3>힘은 운동 상태를 바꿔요</h3>
+    <figure><svg viewBox="0 0 300 70" role="img" aria-label="속력만 변하는 운동, 방향만 변하는 운동, 둘 다 변하는 운동의 점 사진">
+      <rect width="300" height="70" style="fill:var(--stage)"/>
+      ${['speed', 'dir', 'both'].map((k, i) => `<g transform="translate(${i * 100} 4)">${strobeFig(k)}<text x="50" y="60" style="fill:var(--text-1);font:700 12px var(--font-ui);text-anchor:middle">${['속력만', '방향만', '둘 다'][i]}</text></g>`).join('')}
+    </svg></figure>
+    <p class="def">물체에 힘이 작용하면 속력이 변하거나, 운동 방향이 변하거나, 둘 다 변해요.</p>
+    <p>점 사이 간격이 넓어지면 빨라진 것, 좁아지면 느려진 것이에요. 점이 이어지는 길이 꺾이면 운동 방향이 변한 것이에요. 힘이 작용하지 않으면 운동 상태는 변하지 않아요.</p>
+    <p class="link">${r ? `방금 ${condText(r.cond)}로 밀었을 때 ‘${KIND[r.cls.kind]}’.` : '에어 테이블에서 네 가지 방향으로 밀어 보고, 변화 도감을 채워 보세요.'}</p></article>
+  <article class="tcard"><h3>힘이 클수록 변화도 커요</h3>
+    <p class="def">같은 시간 동안 같은 방향으로 밀 때, 힘이 클수록 속력이나 운동 방향이 더 많이 변해요.</p>
+    <p>에어 테이블은 공기가 퍽을 살짝 띄워 마찰이 거의 없어요. 그래서 힘을 주는 0.4초 동안에만 운동 상태가 변하고, 그 뒤에는 바뀐 속력과 방향 그대로 나아가요.</p>
+    <p class="link">방향과 처음 상태는 그대로 두고 힘의 크기만 바꿔 두 번 밀어 보세요. 흐린 점(직전 결과)과 비교할 수 있어요.</p></article>
+  <article class="tcard"><h3>힘은 모양도 바꿔요</h3>
+    <figure><svg viewBox="0 0 300 80" role="img" aria-label="탁자 끝에 고정한 자를 누르면 휘어진다">
+      <rect width="300" height="80" style="fill:var(--stage)"/><rect x="0" y="36" width="110" height="44" style="fill:var(--desk-lo)"/>
+      <path d="M30 32H110L270 32V36H110 30Z" style="fill:none;stroke:var(--ghost-dot);stroke-width:1.2;stroke-dasharray:4 3"/>
+      <path d="M30 32H110Q200 36 268 58L268 62Q200 40 110 36H30Z" style="fill:var(--ruler);stroke:var(--ruler-edge)"/>
+      <line x1="266" y1="58" x2="266" y2="76" style="stroke:var(--force);stroke-width:3"/><path d="M266 80 261 71h10Z" style="fill:var(--force)"/>
+    </svg></figure>
+    <p class="def">힘은 물체의 모양도 변하게 해요. 누르는 힘이 클수록 자가 더 많이 휘어요.</p>
+    <p>자처럼 힘을 없애면 원래 모양으로 돌아오는 성질을 탄성이라고 해요.</p>
+    <p class="link">${P.pts.length >= 2 ? `기록한 점: ${P.pts.map(p => `${f1(p[0])} N → ${f1(p[1])} cm`).join(', ')}.` : '‘모양 변화’에서 누르는 힘을 여러 번 바꿔 그래프에 점을 찍어 보세요.'}</p></article>`;
+}
+const HELP = {
+  how: `<ol><li><b>운동 상태 변화</b> — 처음 상태(움직이는 중/멈춰 있음), 힘의 방향, 힘의 크기를 고르고 <b>출발</b>을 눌러요. 퍽이 점선 자리에 오면 0.4초 동안 그 힘을 받아요. 0.2초마다 찍힌 점의 간격과 길의 꺾임으로 변화를 읽어요.</li>
+    <li>속력만·방향만·둘 다 변하는 운동을 만들어 <b>변화 도감</b>을 채워요. 힘의 크기만 바꿔 다시 하면 흐린 점(직전 결과)과 비교돼요.</li>
+    <li><b>모양 변화</b> — 자 끝을 누르는 힘을 바꾸고, 세워 둔 눈금자로 자 끝이 내려간 거리를 읽어요. <b>손 떼기</b>를 누르면 자가 돌아와요.</li></ol>`,
+  keys: '실험 고르기 탭에 포커스: <kbd>←</kbd><kbd>→</kbd> · 힘의 크기 막대: <kbd>←</kbd><kbd>→</kbd> · <kbd>Space</kbd>(포커스가 버튼이 아닐 때) 출발',
+  model: `<ul><li>에어 테이블은 마찰이 없다고 보았어요. 퍽 질량 1.0 kg, 움직이는 중일 때 처음 속력 1.0 m/s, 힘은 0.4초 동안 같은 크기로 작용해요.</li>
+    <li>‘운동 방향·반대 방향·옆으로’는 힘의 방향이 0.4초 동안 고정돼요. ‘늘 옆으로(줄)’는 핀에 묶은 줄이 퍽을 당기는 것처럼 힘이 늘 운동 방향에 수직이에요(줄 반지름 = 질량×속력²÷힘). 0.4초 뒤에 줄을 놓아요.</li>
+    <li>화살표 길이는 힘의 크기를 나타내요(1 N = 눈금 한 칸). 테이블 그림의 길이(cm)와는 다른 눈금이에요.</li>
+    <li>속력은 0.1 m/s까지 보여요. 퍽이 테이블 가장자리에 닿으면 실험이 끝나요.</li>
+    <li>자 휘기: 30 cm 플라스틱 자를 탁자 밖으로 20 cm 내밀어 고정했어요. 끝이 내려간 거리는 누르는 힘 1 N에 약 4.4 cm로, 작게 휘는 범위에서 힘에 비례한다고 보았어요.</li></ul>`,
+  source: '<p>2022 개정 중학교 과학 ‘힘의 작용’ — [9과05-03] 알짜힘이 0이 아닐 때 물체의 운동 상태가 변함을 알고, 그 예를 조사하여 분류할 수 있다. (해설: 속력이 변하거나 운동 방향이 바뀌거나 두 가지가 모두 변하는 사례로 분류). 이전 판(세 칸 인포그래픽)의 ‘힘이 클수록 속력(km/h)이 커진다’는 표현을 ‘같은 시간 동안 힘이 클수록 속력의 변화가 커진다’로 바로잡았어요.</p>',
+  wipe: '두 실험의 조건, 결과와 직전 결과, 변화 도감, 자 휘기 그래프의 점',
+};
+
+/* ═════════ 이벤트 · 시작 ═════════ */
+function capture() {
+  if (tab === 'motion') {
+    const r = runs[runs.length - 1];
+    return { svg: svgM, flashEl: $('#stage'), title: '힘의 크기와 물체의 변화 — 운동 상태 변화',
+      cond: `조건: ${C.v0 > 0 ? `움직이는 퍽(처음 속력 ${f1(V0)} m/s)` : '멈춰 있는 퍽'} · 힘의 방향 ${DIRS[C.d]} · 힘의 크기 ${f1(C.F)} N · 0.4초 동안`,
+      state: r ? `최근 결과(${condText(r.cond)}): ${KIND[r.cls.kind]} — 속력 ${$('#resSpeed').textContent} · 운동 방향 ${$('#resDir').textContent}` : '아직 출발하지 않았어요' };
+  }
+  return { svg: svgS, flashEl: $('#stage'), title: '힘의 크기와 물체의 변화 — 모양 변화',
+    cond: `자 끝을 누르는 힘 ${f1(P.F)} N (30 cm 플라스틱 자, 탁자 밖 20 cm)`,
+    state: `자 끝이 내려간 거리 ${f1(sag)} cm${P.pts.length ? ` · 기록: ${P.pts.map(p => `${f1(p[0])} N→${f1(p[1])} cm`).join(', ')}` : ''}` };
+}
+function bind() {
+  $('#clrBtn').innerHTML = `${icon('trash')}점 지우기`;
+  $('#releaseBtn').innerHTML = `${icon('undo')}손 떼기`;
+  $('#tabSeg').addEventListener('click', e => { const b = e.target.closest('[role=tab]'); if (b) setTab(b.dataset.tab); });
+  $('#tabSeg').addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); setTab(tab === 'motion' ? 'shape' : 'motion'); $(`#tabSeg [data-tab="${tab}"]`).focus(); } });
+  $('#startChips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; C.v0 = +b.dataset.v0; if (C.v0 === 0 && C.d === 'turn') C.d = 'side'; trial = null; save(); syncDeck(); renderM(); });
+  $('#dirSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.getAttribute('aria-disabled') === 'true') { toast(b.title); return; } C.d = b.dataset.d; save(); syncDeck(); if (!trial) renderM(); });
+  $('#magRng').addEventListener('input', e => { C.F = +e.target.value; save(); syncDeck(); if (!trial) renderM(); });
+  $('#goBtn').addEventListener('click', go);
+  $('#clrBtn').addEventListener('click', () => { runs = []; trial = null; save(); renderResult(); renderM(); syncDeck(); announce('점과 결과를 지웠어요. 변화 도감은 그대로예요.'); });
+  $('#ghostTog').addEventListener('click', () => { showGhost = !showGhost; save(); syncDeck(); renderM(); });
+  $('#pressRng').addEventListener('input', e => setPress(+e.target.value, false));
+  $('#pressRng').addEventListener('change', e => setPress(+e.target.value, true));
+  $$('#deckS [data-p]').forEach(b => b.addEventListener('click', () => setPress(+b.dataset.p, true)));
+  $('#releaseBtn').addEventListener('click', () => setPress(0, true));
+  $('#plotClr').addEventListener('click', () => { P.pts = []; P.ghost = null; save(); renderPlot(); renderS(); });
+}
+buildM(); buildS(); bind();
+SS.init({
+  id: 'magnitude-of-force', title: '힘의 크기와 물체의 변화', file: '힘의크기와물체의변화', version: APP_VERSION, date: APP_DATE,
+  help: HELP, theory, capture, onResize: sizeText,
+  onKey: e => { if (e.key === ' ' && tab === 'motion' && !e.target.closest('button,input,a')) { e.preventDefault(); go(); } },
+  onWipe: () => { C = { v0: 1, d: 'fwd', F: 3 }; book = { speed: null, dir: null, both: null }; runs = []; trial = null; showGhost = true; P = { F: 0, pts: [], ghost: null }; sag = 0; setTab('motion'); renderResult(); renderBook(); renderPlot(); renderM(); renderS(); },
+});
+setTab(tab); setPress(P.F, false); renderResult(); renderBook(); renderPlot();
+SS.loop(step);
+window.MagLab = { go, step: dt => step(dt), state: () => ({ C, runs, book, trial, P, sag, tab }), setC: o => { Object.assign(C, o); syncDeck(); renderM(); }, setTab, setPress };
+
+</script>
 </body>
 </html>

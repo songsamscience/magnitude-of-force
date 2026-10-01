@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
-<meta name="version" content="2.0">
-<meta name="description" content="에어 테이블 위의 퍽을 여러 방향·크기의 힘으로 밀어 속력이 변하는 운동, 방향이 변하는 운동, 둘 다 변하는 운동을 만들어 보고, 자를 눌러 힘의 크기에 따라 모양이 변하는 정도를 비교하는 중학교 과학 가상실험실">
+<meta name="version" content="2.1">
+<meta name="description" content="에어 테이블 위의 퍽을 여러 방향·크기의 힘으로 밀어 속력·운동 방향이 변하는 운동과 알짜힘이 0인 힘의 평형을 만들고, 교과서 속 운동을 점 사진으로 분류하며 자를 눌러 모양 변화도 비교하는 중학교 과학 가상실험실">
 <meta property="og:title" content="송쌤과학 가상실험실 | 힘의 크기와 물체의 변화">
 <meta property="og:description" content="같은 퍽이라도 어느 쪽으로, 얼마나 세게 미느냐에 따라 빨라지거나, 꺾이거나, 둘 다 변해요">
 <meta property="og:type" content="website">
@@ -204,6 +204,9 @@ dialog::backdrop{background:var(--scrim)}
 .tcard .def{font:700 15px/1.6 var(--font-ui);margin-bottom:6px}
 .tcard p{font-size:15px;line-height:1.7;color:var(--text-1)}
 .tcard p+p{margin-top:6px}
+.tcard .tb-list{margin:4px 0 0;padding:0 0 0 18px;display:grid;gap:5px}
+.tcard .tb-list li{font-size:14px;line-height:1.6;color:var(--text-1)}
+.tcard .tb-list b{font-weight:800}
 .tcard .link{margin-top:10px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-1) var(--r-1) 0;font-size:15px;line-height:1.65}
 .toast{position:fixed;left:50%;bottom:calc(20px + var(--strip-h) + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:10px;max-width:min(360px,calc(100vw - 24px));padding:10px 14px;border-radius:var(--r-2);background:var(--surface-1);border:1px solid var(--line-2);box-shadow:var(--edge-hi),var(--shadow-2);font:500 13px/1.5 var(--font-ui);color:var(--text-1)}
 .toast.error{border-color:var(--danger)}
@@ -233,6 +236,7 @@ dialog::backdrop{background:var(--scrim)}
 /* ═══════ 이 실험실 ═══════ */
 /* 힘의 크기와 물체의 변화 — 넓은 장면(에어 테이블은 가로로 긴 운동) + 아래 계기 덱 */
 :root[data-theme="dark"]{
+  --e-ground:#1c3044;--e-line:#3d5873;--e-leaf:#2f6b4a;--e-trunk:#6b4a2f;--e-apple:#ff6b5a;--e-ball:#f59a3c;--e-stone:#aab6c2;--e-cabin:#f2c14e;--e-earth:#2f6fb5;--e-land:#3f9a5a;--e-ice:#20384f;--e-house:#c04a4a;--e-house2:#2a4f86;--e-sat:#d7dee6;--e-panel:#4c7fbf;
   --force:#ff7b5c;--force-ink:#5a1a0e;
   --table:#16273a;--table-2:#1b3047;--rail:#2c4258;--rail-hi:#3d5873;--hole:#2c4661;
   --puck-hi:#b7d7ff;--puck:#5aa2ff;--puck-lo:#1d4f95;--puck-cap:#dbe9ff;
@@ -241,6 +245,7 @@ dialog::backdrop{background:var(--scrim)}
   --ruler:#e3d7a0;--ruler-edge:#a8995a;--ruler-ink:#3a3320;--clamp:#8d98a5;--clamp-lo:#56606b;--scale:#c7d2dc;--scale-ink:#0e1a27;
 }
 :root[data-theme="light"]{
+  --e-ground:#d5dfe7;--e-line:#9db0c0;--e-leaf:#5aa36f;--e-trunk:#9a7045;--e-apple:#d63a2a;--e-ball:#e07a18;--e-stone:#7d8a97;--e-cabin:#e0a81c;--e-earth:#3b82d0;--e-land:#4aa865;--e-ice:#e7f1f8;--e-house:#d65a5a;--e-house2:#4f78b8;--e-sat:#8a97a5;--e-panel:#2f63a8;
   --force:#cf3a1c;--force-ink:#ffffff;
   --table:#e4ebf1;--table-2:#d6e0e8;--rail:#7d8e9f;--rail-hi:#a9b8c6;--hole:#b9c7d3;
   --puck-hi:#9ec8ff;--puck:#1f6fd1;--puck-lo:#0e3f80;--puck-cap:#e6f0ff;
@@ -309,16 +314,63 @@ dialog::backdrop{background:var(--scrim)}
 .sf-label{fill:var(--force);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--stage);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
 .drop-t{fill:var(--text-1);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--stage);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
 
+/* 생활 속 예 — 점 사진 */
+.e-ground{fill:var(--e-ground)}
+.e-ground-c{fill:var(--e-ground);opacity:.55}
+.e-cap{fill:var(--text-2);font-size:var(--t12);font-weight:600}
+.e-cap.end{text-anchor:end}
+.e-path{fill:none;stroke:var(--e-line);stroke-width:.8;stroke-dasharray:2 2}
+.e-dot{fill:var(--dot-after);stroke:var(--stage);stroke-width:.6}
+.e-trunk{fill:var(--e-trunk)}.e-leaf{fill:var(--e-leaf)}.e-branch{stroke:var(--e-trunk);stroke-width:2.4;stroke-linecap:round}
+.e-apple{fill:var(--e-apple);stroke:var(--stage);stroke-width:.8}
+.e-rider{fill:var(--puck);stroke:var(--stage);stroke-width:.8}
+.e-ball{fill:var(--e-ball);stroke:#7a3a08;stroke-width:.7}
+.e-pole{fill:var(--e-line)}
+.e-cable,.e-rope{stroke:var(--text-2);stroke-width:.9}
+.e-ice{fill:var(--e-ice);stroke:var(--e-line);stroke-width:.6}
+.e-house{fill:var(--e-house);opacity:.55}.e-house2{fill:var(--e-house2);opacity:.6}
+.e-stone{fill:var(--e-stone);stroke:var(--stage);stroke-width:.8}.e-handle{fill:var(--e-apple)}
+.e-ring{fill:none;stroke:var(--e-line);stroke-width:2.2}.e-spoke{stroke:var(--e-line);stroke-width:.8}.e-leg{fill:none;stroke:var(--e-line);stroke-width:3;stroke-linecap:round}
+.e-hub{fill:var(--text-2)}
+.e-cabin{fill:var(--e-cabin);stroke:var(--stage);stroke-width:.6}
+.e-canopy{fill:var(--e-house2);opacity:.75}
+.e-orbit{fill:none;stroke:var(--e-line);stroke-width:.8;stroke-dasharray:2 2.4}
+.e-earth{fill:var(--e-earth)}.e-land{fill:var(--e-land)}
+.e-sat{fill:var(--e-sat)}.e-panel{fill:var(--e-panel)}
+.e-board{fill:var(--scale)}.e-rim{stroke:var(--e-ball);stroke-width:2;stroke-linecap:round}.e-net{fill:none;stroke:var(--text-2);stroke-width:.6}
+.e-frame{fill:none;stroke:var(--e-line);stroke-width:3;stroke-linejoin:round}
+.e-f{stroke:var(--force);stroke-width:2.2}
+.e-fh{fill:var(--force)}
+.e-ft{fill:var(--force);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--stage);stroke-width:var(--h3,3px);stroke-linejoin:round;dominant-baseline:central}
+
 /* 아래 계기 덱 */
 .deck{display:grid;grid-template-columns:minmax(340px,1.35fr) minmax(250px,1fr) minmax(220px,1fr) minmax(250px,1.1fr);border-top:1px solid var(--line-1);background:var(--surface-1)}
 .deck-s{grid-template-columns:minmax(300px,1.2fr) minmax(200px,.8fr) minmax(280px,1.2fr)}
+.deck-e{grid-template-columns:minmax(300px,1.1fr) minmax(280px,1.2fr) minmax(300px,1.2fr)}
+.e-name{font:800 17px/1.4 var(--font-ui);color:var(--text-1)}
+.e-ans{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.e-ans .btn{min-height:44px;font-size:14px;padding:0 8px}
+.e-ans .btn.miss{border-color:var(--warn);background:var(--warn-soft)}
+.e-fb{font:400 14px/1.6 var(--font-ui);color:var(--text-1)}
+.e-fb b{font-weight:800}
+.e-done{display:block;margin-top:6px;color:var(--text-2);font-size:13px}
+.e-done .textlink{display:inline-flex;padding:2px 0}
+.elist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.elist button{width:100%;display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:6px;align-items:center;min-height:30px;padding:2px 8px;border:1px dashed var(--line-2);border-radius:var(--r-1);background:transparent;color:var(--text-1);font:600 12px/1.25 var(--font-ui);text-align:left;cursor:pointer}
+.elist button.on{border-style:solid;background:var(--surface-2)}
+.elist button.cur{border-color:var(--accent);border-style:solid;box-shadow:inset 0 0 0 1px var(--accent)}
+.elist .bk-ic{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--text-2)}
+.elist button.on .bk-ic{background:var(--ok);border-color:var(--ok);color:var(--surface-1)}
+.elist .bk-ic svg{width:11px;height:11px;stroke-width:2.6}
+.elist .el-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.elist .el-k{color:var(--text-2);font-weight:700}
 .grp{padding:10px 16px 12px;min-width:0;display:flex;flex-direction:column;gap:6px}
 .grp+.grp{border-left:1px solid var(--line-1)}
 .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .row.col{flex-direction:column;align-items:stretch;gap:6px}
 .lbl-note{font-weight:500;color:var(--text-2);margin-left:4px}
-.dirseg{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-flow:row}
-.dirseg button{display:flex;flex-direction:column;align-items:center;gap:1px;min-height:44px;padding:3px 6px;font-size:12px}
+.dirseg{display:grid;grid-template-columns:repeat(5,1fr);grid-auto-flow:row}
+.dirseg button{display:flex;flex-direction:column;align-items:center;gap:1px;min-height:44px;padding:3px 4px;font-size:12px;white-space:nowrap}
 .dirseg svg{width:28px;height:14px}
 .dirseg button[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
 .d-puck{fill:var(--puck)}.d-arr{stroke:var(--force);stroke-width:2;fill:none}.d-head{fill:var(--force)}.d-mv{stroke:var(--text-2);stroke-width:1.2;stroke-dasharray:2 1.5;fill:none}
@@ -362,7 +414,7 @@ dialog::backdrop{background:var(--scrim)}
 @media (max-width:1180px){
   .deck{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr)}
   .g-book{grid-column:1 / -1;border-left:0!important;border-top:1px solid var(--line-1)}
-  .book{grid-template-columns:repeat(3,1fr)}
+  .book{grid-template-columns:repeat(4,1fr)}
 }
 @media (max-width:860px){
   main.app{overflow:auto}
@@ -373,7 +425,7 @@ dialog::backdrop{background:var(--scrim)}
   .stage-head .save-btn{margin-left:auto}
   .stage{aspect-ratio:344/188;flex:none}
   .lab[data-tab="shape"] .stage{aspect-ratio:52/23}
-  .deck,.deck-s{grid-template-columns:minmax(0,1fr)}
+  .deck,.deck-s,.deck-e{grid-template-columns:minmax(0,1fr)}
   .grp+.grp{border-left:0;border-top:1px solid var(--line-1)}
   .book{grid-template-columns:minmax(0,1fr)}
   .g-res{order:-1}
@@ -383,6 +435,7 @@ dialog::backdrop{background:var(--scrim)}
   .save-btn{width:44px;height:44px;padding:0;justify-content:center}
   .save-btn .save-l{display:none}
   .dirseg{grid-template-columns:repeat(2,1fr)}
+  .dirseg button[data-d="bal"]{grid-column:1 / -1}
   .dirseg button{flex-direction:row;justify-content:flex-start;gap:8px;min-height:44px;font-size:13px}
   .grp{padding:10px 12px 12px}
 }
@@ -421,6 +474,7 @@ dialog::backdrop{background:var(--scrim)}
       <div class="seg tabs" id="tabSeg" role="tablist" aria-label="실험 고르기">
         <button role="tab" id="tabMotion" data-tab="motion" aria-selected="true" aria-controls="stage">운동 상태 변화</button>
         <button role="tab" id="tabShape" data-tab="shape" aria-selected="false" aria-controls="stage">모양 변화</button>
+        <button role="tab" id="tabSort" data-tab="sort" aria-selected="false" aria-controls="stage">생활 속 예</button>
       </div>
       <p class="stage-goal note-slot" id="stageGoal"></p>
       <button class="save-btn" id="saveBtn" aria-label="실험 결과를 PNG 이미지로 저장 (C)" title="실험 결과를 PNG 이미지로 저장 (C)"></button>
@@ -450,6 +504,13 @@ dialog::backdrop{background:var(--scrim)}
         <g id="sArrow"></g>
         <g id="sTags"></g>
       </svg>
+      <svg id="sceneE" class="scene" viewBox="0 0 344 188" role="img" aria-label="교과서에 나온 운동을 같은 시간 간격으로 찍은 점 사진" hidden>
+        <g id="eBack"></g>
+        <g id="ePath"></g>
+        <g id="eDots"></g>
+        <g id="eForce"></g>
+        <g id="eTags"></g>
+      </svg>
     </div>
   </section>
 
@@ -468,7 +529,8 @@ dialog::backdrop{background:var(--scrim)}
           <button data-d="fwd" aria-pressed="true"><svg viewBox="0 0 28 14" aria-hidden="true"><circle cx="8" cy="7" r="4" class="d-puck"/><path d="M13 7h9" class="d-arr"/><path d="M26 7l-5-3.5v7Z" class="d-head"/></svg><span>운동 방향</span></button>
           <button data-d="back" aria-pressed="false"><svg viewBox="0 0 28 14" aria-hidden="true"><circle cx="20" cy="7" r="4" class="d-puck"/><path d="M15 7H6" class="d-arr"/><path d="M2 7l5-3.5v7Z" class="d-head"/><path d="M24.5 7h2" class="d-mv"/></svg><span>반대 방향</span></button>
           <button data-d="side" aria-pressed="false"><svg viewBox="0 0 28 14" aria-hidden="true"><circle cx="9" cy="10" r="3.4" class="d-puck"/><path d="M9 6V2.8" class="d-arr"/><path d="M9 0l-3 3.6h6Z" class="d-head"/><path d="M14 10h8" class="d-mv"/></svg><span>옆으로</span></button>
-          <button data-d="turn" aria-pressed="false"><svg viewBox="0 0 28 14" aria-hidden="true"><path d="M4 12a9 9 0 0 1 18-2" class="d-mv" fill="none"/><circle cx="21" cy="10" r="3.2" class="d-puck"/><path d="M19.2 7.4 15 3.8" class="d-arr"/><path d="M13 2l.6 4.2 3.4-2.8Z" class="d-head"/></svg><span>늘 옆으로(줄)</span></button>
+          <button data-d="turn" aria-pressed="false"><svg viewBox="0 0 28 14" aria-hidden="true"><path d="M4 12a9 9 0 0 1 18-2" class="d-mv" fill="none"/><circle cx="21" cy="10" r="3.2" class="d-puck"/><path d="M19.2 7.4 15 3.8" class="d-arr"/><path d="M13 2l.6 4.2 3.4-2.8Z" class="d-head"/></svg><span>늘 옆으로</span></button>
+          <button data-d="bal" aria-pressed="false"><svg viewBox="0 0 28 14" aria-hidden="true"><path d="M10 7H4" class="d-arr"/><path d="M1 7l4-3v6Z" class="d-head"/><path d="M18 7h6" class="d-arr"/><path d="M27 7l-4-3v6Z" class="d-head"/><circle cx="14" cy="7" r="4" class="d-puck"/></svg><span>양쪽 같은 힘</span></button>
         </div>
       </div>
     </div>
@@ -487,11 +549,12 @@ dialog::backdrop{background:var(--scrim)}
       <dl class="res-list">
         <div><dt>속력</dt><dd class="num" id="resSpeed">–</dd></div>
         <div><dt>운동 방향</dt><dd class="num" id="resDir">–</dd></div>
+        <div><dt>알짜힘</dt><dd class="num" id="resNet">–</dd></div>
       </dl>
       <p class="res-note" id="resNote"></p>
     </div>
     <div class="grp g-book">
-      <div class="res-head"><span class="lbl">변화 도감</span><span class="book-count num" id="bookCount">0/3</span></div>
+      <div class="res-head"><span class="lbl">변화 도감</span><span class="book-count num" id="bookCount">0/4</span></div>
       <ul class="book" id="book"></ul>
     </div>
   </section>
@@ -514,6 +577,25 @@ dialog::backdrop{background:var(--scrim)}
     <div class="grp g-plot">
       <div class="res-head"><span class="lbl">누른 힘과 내려간 거리</span><button class="chip" id="plotClr" title="그래프의 점 지우기">점 지우기</button></div>
       <svg id="plot" viewBox="0 0 240 132" role="img" aria-label="누른 힘과 자 끝이 내려간 거리의 그래프"></svg>
+    </div>
+  </section>
+
+  <section class="deck deck-e" id="deckE" aria-label="생활 속 예 — 운동 분류" hidden>
+    <div class="grp g-q">
+      <div class="res-head"><span class="lbl">무엇이 변하는 운동일까요?</span><span class="book-count num" id="eCount">0/8</span></div>
+      <p class="e-name" id="eName"></p>
+      <div class="e-ans" id="eAns" role="group" aria-label="운동 상태 변화 고르기">
+        <button class="btn" data-k="speed">속력만</button><button class="btn" data-k="dir">운동 방향만</button><button class="btn" data-k="both">둘 다</button>
+      </div>
+      <div class="go-row"><button class="btn ghost" id="ePrev"></button><button class="btn grow" id="eNext"></button></div>
+    </div>
+    <div class="grp g-efb">
+      <div class="res-head"><span class="lbl">점 사진 읽기</span><button class="chip" id="eReplay" title="점을 처음부터 다시 찍기">다시 찍기</button></div>
+      <p class="e-fb" id="eFb" aria-live="polite"></p>
+    </div>
+    <div class="grp g-elist">
+      <div class="res-head"><span class="lbl">교과서 속 운동</span><span class="lbl-note">눌러서 고르기</span></div>
+      <ul class="elist" id="eList"></ul>
     </div>
   </section>
 </div>
@@ -832,7 +914,7 @@ const SS = (() => {
 
 /* ═══════ 이 실험실 ═══════ */
 /* ───────── 힘의 크기와 물체의 변화 — 에어 테이블 위 퍽 밀기 · 자 휘기 ───────── */
-const APP_VERSION = '2.0', APP_DATE = '2026-10-01';
+const APP_VERSION = '2.1', APP_DATE = '2026-10-01';
 const { $, $$, el, icon, toast, announce, store } = SS;
 
 /* ── 과학 진실층: 모형 값 ── */
@@ -852,16 +934,16 @@ const f1 = v => (Math.round(v * 10) / 10).toFixed(1);
 const deg = r => r * 180 / Math.PI;
 
 /* ── 상태 ── */
-const DIRS = { fwd: '운동 방향', back: '반대 방향', side: '옆으로', turn: '늘 옆으로(줄)' };
+const DIRS = { fwd: '운동 방향', back: '반대 방향', side: '옆으로', turn: '늘 옆으로', bal: '양쪽 같은 힘' };
 let tab = store.get('tab', 'motion');
 let C = Object.assign({ v0: 1, d: 'fwd', F: 3 }, store.get('cond', {}));
-let book = store.get('book', { speed: null, dir: null, both: null });
+let book = Object.assign({ speed: null, dir: null, both: null, none: null }, store.get('book', {}));
 let showGhost = store.get('ghost', true);
 let runs = store.get('runs', []);            // 최근 두 번의 시도 [{cond, dots, v0v, v1v, kind}] — 결과·직전 고스트
 let trial = null;
 let P = Object.assign({ F: 0, pts: [], ghost: null }, store.get('press', {}));
 let sag = SAG_PER_N * P.F;                   // 지금 자 끝이 내려간 거리(cm) — 목표값을 짧게 따라간다
-function save() { store.set('tab', tab); store.set('cond', C); store.set('book', book); store.set('ghost', showGhost); store.set('runs', runs); store.set('press', P); }
+function save() { store.set('sort', E); store.set('tab', tab); store.set('cond', C); store.set('book', book); store.set('ghost', showGhost); store.set('runs', runs); store.set('press', P); }
 
 /* ═════════ 에어 테이블 장면 ═════════ */
 const svgM = $('#sceneM'), svgS = $('#sceneS');
@@ -890,10 +972,14 @@ function buildM() {
   el('path', { id: 'ft', class: 'f-tick' }, ar);
   el('path', { id: 'fh', class: 'f-head' }, ar);
   el('text', { id: 'fl', class: 'f-label' }, ar);
+  el('line', { id: 'fb2', class: 'f-body' }, ar);        // 양쪽 같은 힘: 반대쪽 화살표
+  el('path', { id: 'ft2', class: 'f-tick' }, ar);
+  el('path', { id: 'fh2', class: 'f-head' }, ar);
+  el('text', { id: 'fl2', class: 'f-label' }, ar);
 }
 /* 힘의 방향 벡터(단위): u는 퍽이 움직이는 쪽 */
 function forceDir(d, u, vNow) {
-  if (d === 'fwd') return u;
+  if (d === 'fwd' || d === 'bal') return u;               // 양쪽 같은 힘: 한쪽은 u, 다른 쪽은 −u (알짜힘 0)
   if (d === 'back') return [-u[0], -u[1]];
   if (d === 'side') return [-u[1], u[0]];                         // 처음 운동 방향에 수직(위쪽), 방향 고정
   const s = Math.hypot(vNow[0], vNow[1]) || 1;                    // 늘 지금 운동 방향에 수직(줄이 당김)
@@ -922,7 +1008,7 @@ function stepTrial(tr, dt) {
       tr.x += tr.vx * h;
       if (tr.x >= X_PUSH) { tr.x = X_PUSH; startPush(tr); }
     } else if (tr.phase === 'push') {
-      const f = forceDir(tr.cond.d, tr.u0, [tr.vx, tr.vy]), a = tr.cond.F / M * 100;   // cm/s²
+      const f = forceDir(tr.cond.d, tr.u0, [tr.vx, tr.vy]), a = tr.cond.d === 'bal' ? 0 : tr.cond.F / M * 100;   // cm/s² · 두 힘이 평형이면 알짜힘 0
       tr.vx += f[0] * a * h; tr.vy += f[1] * a * h;
       if (tr.cond.d === 'turn') { const s = Math.hypot(tr.vx, tr.vy) || 1; tr.vx *= tr.turnS / s; tr.vy *= tr.turnS / s; }  // 줄은 속력을 바꾸지 않는다
       tr.x += tr.vx * h; tr.y += tr.vy * h; tr.tp += h;
@@ -952,7 +1038,8 @@ function finishPush(tr) {
   tr.cls = c;
   const rec = { cond: tr.cond, v0v: tr.v0v, v1v: tr.v1v, cls: c, dots: null };
   runs.push(rec); if (runs.length > 2) runs = runs.slice(-2);
-  if (c.kind !== 'none' && !book[c.kind]) { book[c.kind] = { ...tr.cond }; toast(`변화 도감: ‘${BOOK[c.kind].name}’을 찾았어요`); }
+  const bk = c.kind !== 'none' ? c.kind : tr.cond.d === 'bal' && tr.cond.F > 0 ? 'none' : null;   // 힘을 주고도 변하지 않은 경우만 ‘힘의 평형’
+  if (bk && !book[bk]) { book[bk] = { ...tr.cond }; toast(`변화 도감: ‘${BOOK[bk].name}’을 찾았어요`); }
   save(); renderResult(); renderBook();
   announce(`${KIND[c.kind]}. 속력 ${f1(c.s0)}에서 ${f1(c.s1)} 미터 매 초.`);
 }
@@ -1001,6 +1088,9 @@ function renderM() {
   const showArrow = cond.F > 0 && (pushing || !trial);
   $('#mArrow').style.display = showArrow ? '' : 'none';
   if (showArrow) drawArrow(['#fb', '#ft', '#fh', '#fl'], ax, ay, fdir, cond.F, AS, 1, `${f1(cond.F)} N`);
+  const two = showArrow && cond.d === 'bal';
+  ['#fb2', '#ft2', '#fh2', '#fl2'].forEach(id => { $(id).style.display = two ? '' : 'none'; });
+  if (two) drawArrow(['#fb2', '#ft2', '#fh2', '#fl2'], ax, ay, [-fdir[0], -fdir[1]], cond.F, AS, 1, `${f1(cond.F)} N`);
   const plan = $('#plan'); plan.style.display = !trial && C.v0 > 0 ? '' : 'none';
   { const [sx, sy] = T(X_PUSH, Y0); plan.setAttribute('cx', sx); plan.setAttribute('cy', sy); }
   // 줄(늘 옆으로): 핀과 줄
@@ -1112,17 +1202,149 @@ function renderPlot() {
   el('circle', { cx: xs(P.F), cy: ys(SAG_PER_N * P.F), r: 6, class: 'p-now' }, s);
 }
 
+/* ═════════ 생활 속 예 — 교과서 속 운동을 점 사진으로 보고 나누기 ═════════
+   점은 모두 같은 시간 간격으로 찍었다(현상별 단순 운동 모형). 장면 좌표 344×188, 아래가 +y. */
+const svgE = $('#sceneE');
+const EX = [
+  { id: 'apple', name: '나무에서 떨어지는 사과', src: '비상 179쪽', k: 'speed',
+    pts: () => Array.from({ length: 7 }, (_, i) => [196, 58 + 2.75 * i * i]),
+    back: g => { tree(g, 172, 58); ground(g); },
+    forces: [{ i: 4, u: [0, 1], name: '중력' }],
+    why: '중력이 운동 방향과 같은 아래쪽으로 작용해요. 그래서 길은 곧고, 점 간격만 점점 넓어져요(빨라짐).' },
+  { id: 'zip', name: '짚라인을 타고 내려가기', src: '천재 176쪽', k: 'speed',
+    pts: () => { const a = [52, 50], b = [304, 152], L = Math.hypot(b[0] - a[0], b[1] - a[1]), u = [(b[0] - a[0]) / L, (b[1] - a[1]) / L]; return Array.from({ length: 8 }, (_, i) => { const s = 8 + 4.3 * i * i; return [a[0] + u[0] * s, a[1] + u[1] * s + 9]; }); },
+    back: g => { ground(g); el('rect', { x: 36, y: 40, width: 8, height: 132, class: 'e-pole' }, g); el('rect', { x: 306, y: 146, width: 6, height: 26, class: 'e-pole' }, g); el('line', { x1: 40, y1: 44, x2: 309, y2: 150, class: 'e-cable' }, g); },
+    forces: [{ i: 5, u: [.927, .375], name: '알짜힘' }],
+    why: '줄을 따라 내려가는 쪽, 곧 운동 방향과 나란하게 알짜힘이 작용해요. 그래서 길은 곧고 점 간격만 넓어져요.' },
+  { id: 'curl', name: '손을 뗀 뒤 빙판 위를 미끄러지는 컬링 스톤', src: '천재 175쪽', k: 'speed',
+    pts: () => Array.from({ length: 8 }, (_, i) => [44 + 226 * (1 - (1 - i / 7) ** 2), 96]),
+    back: g => { el('rect', { x: 14, y: 66, width: 318, height: 60, rx: 4, class: 'e-ice' }, g); [26, 18, 10, 4].forEach((r, j) => el('circle', { cx: 300, cy: 96, r, class: j % 2 ? 'e-house2' : 'e-house' }, g)); el('text', { x: 18, y: 140, class: 'e-cap' }, g).textContent = '위에서 본 빙판'; },
+    forces: [{ i: 3, u: [-1, 0], name: '마찰력' }],
+    obj: 'stone',
+    why: '마찰력이 운동 방향과 반대쪽으로 작용해요. 그래서 길은 곧고 점 간격이 점점 좁아져요(느려짐).' },
+  { id: 'wheel', name: '일정하게 도는 대관람차의 칸', src: '비상 179쪽', k: 'dir',
+    pts: () => Array.from({ length: 8 }, (_, i) => { const a = -2.6 + i * .42; return [172 + 64 * Math.cos(a), 88 + 64 * Math.sin(a)]; }),
+    back: g => { ground(g); el('path', { d: 'M172 88 132 172M172 88 212 172', class: 'e-leg' }, g); el('circle', { cx: 172, cy: 88, r: 64, class: 'e-ring' }, g); for (let j = 0; j < 12; j++) { const a = j * Math.PI / 6; el('line', { x1: 172, y1: 88, x2: 172 + 64 * Math.cos(a), y2: 88 + 64 * Math.sin(a), class: 'e-spoke' }, g); } el('circle', { cx: 172, cy: 88, r: 5, class: 'e-hub' }, g); },
+    forces: [{ i: 5, center: [172, 88], name: '중심 쪽 알짜힘' }],
+    obj: 'cabin',
+    why: '알짜힘이 늘 원의 중심 쪽, 곧 운동 방향에 수직으로 작용해요. 그래서 점 간격은 같고 길만 휘어요.' },
+  { id: 'chair', name: '위에서 본 회전 그네', src: '천재 176쪽', k: 'dir',
+    pts: () => Array.from({ length: 8 }, (_, i) => { const a = .3 + i * .45; return [172 + 72 * Math.cos(a), 94 - 72 * Math.sin(a)]; }),
+    back: g => { el('circle', { cx: 172, cy: 94, r: 82, class: 'e-ground-c' }, g); for (let j = 0; j < 8; j++) { const a = j * Math.PI / 4; el('line', { x1: 172, y1: 94, x2: 172 + 30 * Math.cos(a), y2: 94 + 30 * Math.sin(a), class: 'e-spoke' }, g); } el('circle', { cx: 172, cy: 94, r: 30, class: 'e-canopy' }, g); el('circle', { cx: 172, cy: 94, r: 7, class: 'e-hub' }, g); el('text', { x: 12, y: 182, class: 'e-cap' }, g).textContent = '위에서 본 모습'; },
+    forces: [{ i: 4, center: [172, 94], name: '중심 쪽 알짜힘' }],
+    why: '쇠줄이 의자를 당겨 알짜힘이 늘 기둥 쪽, 운동 방향에 수직으로 작용해요. 그래서 빠르기는 그대로이고 방향만 바뀌어요.' },
+  { id: 'sat', name: '지구 둘레를 도는 인공위성', src: '동아 169쪽', k: 'dir',
+    pts: () => Array.from({ length: 8 }, (_, i) => { const a = 3.55 + i * .36; return [172 + 74 * Math.cos(a), 104 + 74 * Math.sin(a)]; }),
+    back: g => { el('circle', { cx: 172, cy: 104, r: 74, class: 'e-orbit' }, g); el('circle', { cx: 172, cy: 104, r: 34, class: 'e-earth' }, g); el('path', { d: 'M150 92c6-8 16-6 18 2s-6 12-2 18-8 6-12 0-12-12-4-20zM180 80c8 0 14 6 12 12s-8 4-12 10-10-2-8-10 2-12 8-12zM176 118c6 0 10 4 6 8s-10 2-10-2 0-6 4-6z', class: 'e-land' }, g); },
+    forces: [{ i: 5, center: [172, 104], name: '중력' }],
+    obj: 'sat',
+    why: '지구의 중력이 늘 지구 중심 쪽, 곧 운동 방향에 수직으로 작용해요. 그래서 점 간격은 같고 길만 휘어요.' },
+  { id: 'ball', name: '비스듬히 던진 농구공', src: '천재·동아·비상', k: 'both',
+    pts: () => Array.from({ length: 8 }, (_, i) => [48 + 34 * i, 140 - 42.4 * i + 4.71 * i * i]),
+    back: g => { ground(g); el('rect', { x: 306, y: 44, width: 5, height: 46, class: 'e-board' }, g); el('rect', { x: 311, y: 70, width: 4, height: 102, class: 'e-pole' }, g); el('line', { x1: 286, y1: 82, x2: 306, y2: 82, class: 'e-rim' }, g); el('path', { d: 'M287 83l4 14h11l4-14', class: 'e-net' }, g); },
+    forces: [{ i: 2, u: [0, 1], name: '중력' }],
+    obj: 'ball',
+    why: '중력(아래쪽)이 운동 방향과 비스듬하게 작용해요. 그래서 점 간격도 달라지고 길도 휘어요.' },
+  { id: 'swing', name: '앞뒤로 움직이는 그네', src: '동아 171쪽', k: 'both',
+    pts: () => Array.from({ length: 8 }, (_, i) => { const th = .8 * Math.cos(Math.PI * i / 7); return [172 - 118 * Math.sin(th), 22 + 118 * Math.cos(th)]; }),
+    back: g => { ground(g); el('path', { d: 'M88 172 172 20 256 172', class: 'e-frame' }, g); el('circle', { cx: 172, cy: 22, r: 3, class: 'e-hub' }, g); },
+    forces: [{ i: 2, u: [0, 1], name: '중력' }, { i: 2, center: [172, 22], name: '줄이 당기는 힘' }],
+    rope: [172, 22],
+    why: '중력과 줄이 당기는 힘이 함께 작용해 알짜힘이 운동 방향과 비스듬해요. 그래서 아래로 갈수록 빨라졌다 느려지고, 길도 휘어요.' },
+];
+const E_KIND = { speed: '속력만 변하는 운동', dir: '운동 방향만 변하는 운동', both: '속력과 운동 방향이 모두 변하는 운동' };
+const E_HINT = { speed: '길이 곧게 이어져요. 점 간격은 어떻게 변하나요?', dir: '점 간격이 모두 같아요. 길은 곧은가요?', both: '점 간격과 길의 모양을 둘 다 살펴볼까요?' };
+let E = Object.assign({ i: 0, ok: {}, tried: {} }, store.get('sort', {}));
+const eAnim = { n: 99, t: 0 };              // 지금까지 찍힌 점 수 — 예를 열면 0.18초마다 하나씩
+function tree(g, x, y) {
+  el('rect', { x: x - 5, y: y + 10, width: 10, height: 172 - y - 10, rx: 2, class: 'e-trunk' }, g);
+  [[0, 0, 34], [-24, 10, 22], [26, 8, 24], [6, -20, 22]].forEach(([dx, dy, r]) => el('circle', { cx: x + dx, cy: y + dy, r, class: 'e-leaf' }, g));
+  el('path', { d: `M${x + 12} ${y + 4}L${x + 24} ${y - 2}`, class: 'e-branch' }, g);
+}
+function ground(g) { el('rect', { x: -600, y: 172, width: 1544, height: 400, class: 'e-ground' }, g); }   // 넓은 화면에서도 땅이 끝나지 않게
+function eArrow(g, x, y, u, name, L = 26) {
+  const tx = x + u[0] * L, ty = y + u[1] * L, h = 6, bx = tx - u[0] * h, by = ty - u[1] * h, nx = -u[1], ny = u[0];
+  el('line', { x1: x, y1: y, x2: bx, y2: by, class: 'e-f' }, g);
+  el('path', { d: `M${tx} ${ty}L${bx + nx * 3.4} ${by + ny * 3.4}L${bx - nx * 3.4} ${by - ny * 3.4}Z`, class: 'e-fh' }, g);
+  const lx = tx + u[0] * 5 + (Math.abs(u[1]) > .7 ? 4 : 0), ly = ty + u[1] * 5 + (Math.abs(u[0]) > .7 ? -4 : 4);
+  el('text', { x: lx, y: ly, class: 'e-ft', 'text-anchor': Math.abs(u[0]) < .4 ? 'start' : u[0] > 0 ? 'start' : 'end' }, g).textContent = name;
+}
+function renderE() {
+  const ex = EX[E.i], pts = ex.pts(), n = Math.min(pts.length, eAnim.n);
+  const b = $('#eBack'); b.innerHTML = ''; ex.back(b);
+  const pg = $('#ePath'); pg.innerHTML = '';
+  if (n >= pts.length) el('polyline', { points: pts.map(p => p.join(',')).join(' '), class: 'e-path' }, pg);
+  const dg = $('#eDots'); dg.innerHTML = '';
+  if (ex.rope && n) { const p = pts[n - 1]; el('line', { x1: ex.rope[0], y1: ex.rope[1], x2: p[0], y2: p[1], class: 'e-rope' }, dg); }
+  pts.slice(0, n).forEach(([x, y], j) => {
+    const last = j === n - 1;
+    if (!last) { el('circle', { cx: x, cy: y, r: 3.1, class: 'e-dot' }, dg); return; }
+    if (ex.obj === 'stone') { el('circle', { cx: x, cy: y, r: 7, class: 'e-stone' }, dg); el('rect', { x: x - 2, y: y - 9, width: 4, height: 6, rx: 1.5, class: 'e-handle' }, dg); }
+    else if (ex.obj === 'cabin') { el('rect', { x: x - 6, y: y - 2, width: 12, height: 10, rx: 2.5, class: 'e-cabin' }, dg); el('line', { x1: x, y1: y - 4, x2: x, y2: y - 2, class: 'e-spoke' }, dg); }
+    else if (ex.obj === 'sat') { el('rect', { x: x - 3.5, y: y - 3.5, width: 7, height: 7, rx: 1, class: 'e-sat' }, dg); el('rect', { x: x - 13, y: y - 2, width: 8, height: 4, class: 'e-panel' }, dg); el('rect', { x: x + 5, y: y - 2, width: 8, height: 4, class: 'e-panel' }, dg); }
+    else el('circle', { cx: x, cy: y, r: ex.obj === 'ball' ? 6.5 : 5.5, class: ex.obj === 'ball' ? 'e-ball' : ex.id === 'apple' ? 'e-apple' : 'e-rider' }, dg);
+  });
+  const fg = $('#eForce'); fg.innerHTML = '';
+  if (E.ok[ex.id] && n >= pts.length) ex.forces.forEach(f => {
+    const [x, y] = pts[f.i];
+    let u = f.u;
+    if (f.center) { const dx = f.center[0] - x, dy = f.center[1] - y, d = Math.hypot(dx, dy); u = [dx / d, dy / d]; }
+    eArrow(fg, x, y, u, f.name);
+  });
+  const tg = $('#eTags'); tg.innerHTML = '';
+  el('text', { x: 6, y: 12, class: 'e-cap' }, tg).textContent = '점 사이 시간은 모두 같아요';
+  el('text', { x: 338, y: 12, class: 'e-cap end' }, tg).textContent = ex.src;
+}
+function renderEDeck() {
+  const ex = EX[E.i], done = EX.filter(x => E.ok[x.id]).length, ok = !!E.ok[ex.id], tried = E.tried[ex.id];
+  $('#eCount').textContent = `${done}/${EX.length}`;
+  $('#eName').textContent = `${E.i + 1}. ${ex.name}`;
+  $$('#eAns button').forEach(b => {
+    const on = ok && b.dataset.k === ex.k, miss = !ok && tried === b.dataset.k;
+    b.classList.toggle('primary', on); b.classList.toggle('miss', miss);
+    b.setAttribute('aria-pressed', String(on || miss));
+    b.disabled = eAnim.n < ex.pts().length;
+  });
+  const fb = $('#eFb');
+  if (eAnim.n < ex.pts().length) fb.textContent = '점을 찍는 중이에요…';
+  else if (ok) fb.innerHTML = `<b>${E_KIND[ex.k]}</b>이에요. ${ex.why}`;
+  else if (tried) fb.textContent = `다시 살펴볼까요? ${E_HINT[ex.k]}`;
+  else fb.textContent = '점 사이 간격이 변하는지, 점이 이어지는 길이 휘는지 보고 골라요.';
+  if (done === EX.length && ok) fb.innerHTML += `<span class="e-done">교과서 속 운동 ${EX.length}가지를 모두 나눴어요. <a class="textlink" href="${SS.CHANNELS.yt}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)"><svg class="ic yt-ic" viewBox="0 0 24 24" aria-hidden="true">${SS.ICONS.yt}</svg>유튜브에서 더 보기</a></span>`;
+  $('#ePrev').disabled = E.i === 0; $('#eNext').disabled = E.i === EX.length - 1;
+  $('#eNext').classList.toggle('primary', ok && E.i < EX.length - 1);
+  $('#eList').innerHTML = EX.map((x, j) => `<li><button class="${j === E.i ? 'cur' : ''} ${E.ok[x.id] ? 'on' : ''}" data-ei="${j}" aria-current="${j === E.i}"><span class="bk-ic">${E.ok[x.id] ? icon('check') : ''}</span><span class="el-n">${x.name.replace(/^위에서 본 |^일정하게 도는 |^손을 뗀 뒤 빙판 위를 미끄러지는 |^앞뒤로 움직이는 /, '')}</span><span class="el-k">${E.ok[x.id] ? { speed: '속력만', dir: '방향만', both: '둘 다' }[x.k] : ''}</span></button></li>`).join('');
+}
+function openE(i) { E.i = clamp(i, 0, EX.length - 1); eAnim.n = SS.REDUCED ? 99 : 0; eAnim.t = 0; save(); renderE(); renderEDeck(); }
+function answerE(k) {
+  const ex = EX[E.i];
+  if (E.ok[ex.id]) return;
+  if (k === ex.k) { E.ok[ex.id] = true; delete E.tried[ex.id]; announce(`맞아요. ${E_KIND[ex.k]}`); }
+  else { E.tried[ex.id] = k; announce(`다시 살펴볼까요? ${E_HINT[ex.k]}`); }
+  save(); renderE(); renderEDeck();
+}
+function stepE(dt) {
+  const L = EX[E.i].pts().length;
+  if (tab !== 'sort' || eAnim.n >= L) return;
+  eAnim.t += dt;
+  if (eAnim.t >= .18) { eAnim.t = 0; eAnim.n++; renderE(); if (eAnim.n >= L) renderEDeck(); }
+}
+
 /* ═════════ 덱(조건·결과·도감) ═════════ */
 const KIND = { speed: '속력만 변했어요', dir: '운동 방향만 변했어요', both: '속력과 운동 방향이 모두 변했어요', none: '운동 상태가 변하지 않았어요' };
-const BOOK = {
-  speed: { name: '속력만 변하는 운동', short: '속력만', eg: '출발하는 자동차 · 브레이크를 밟은 자전거' },
-  dir: { name: '방향만 변하는 운동', short: '방향만', eg: '회전목마 · 줄에 매달아 돌리는 공' },
-  both: { name: '속력과 방향이 모두 변하는 운동', short: '둘 다', eg: '비스듬히 던진 공 · 그네' },
+const BOOK = {   // 예는 세 교과서(천재·동아·비상)에 나온 것
+  speed: { name: '속력만 변하는 운동', short: '속력만', eg: '떨어지는 사과 · 짚라인 · 컬링 스톤' },
+  dir: { name: '운동 방향만 변하는 운동', short: '방향만', eg: '대관람차 · 회전 그네 · 인공위성' },
+  both: { name: '속력과 운동 방향이 모두 변하는 운동', short: '둘 다', eg: '비스듬히 던진 농구공 · 그네' },
+  none: { name: '힘의 평형', short: '변화 없음', eg: '바닥에 놓인 책 · 컨베이어 벨트 위 상자', hint: '힘을 주면서도 그대로이게 하려면?' },
 };
+const BK = ['speed', 'dir', 'both', 'none'];
+const netF = c => c.d === 'bal' ? 0 : c.F;
 const condText = c => `${c.v0 > 0 ? '움직이는 퍽' : '멈춘 퍽'} · ${DIRS[c.d]} · ${f1(c.F)} N`;
 function renderResult() {
   const r = runs[runs.length - 1], k = $('#resKind');
-  if (!r) { k.className = 'res-kind idle'; k.textContent = '출발하면 결과가 여기에 나와요'; $('#resSpeed').textContent = '–'; $('#resDir').textContent = '–'; $('#resNote').textContent = ''; return; }
+  if (!r) { k.className = 'res-kind idle'; k.textContent = '출발하면 결과가 여기에 나와요'; $('#resSpeed').textContent = '–'; $('#resDir').textContent = '–'; $('#resNet').textContent = '–'; $('#resNote').textContent = ''; return; }
+  $('#resNet').textContent = r.cond.d === 'bal' && r.cond.F > 0 ? `${f1(r.cond.F)} N − ${f1(r.cond.F)} N = 0 N` : `${f1(netF(r.cond))} N`;
   const c = r.cls; k.className = 'res-kind'; k.textContent = KIND[c.kind];
   const rev = c.ang != null && c.ang > 179 && c.sMin != null && c.sMin < .05;
   const sp = c.s0 < .02 && c.s1 >= .02 ? `0 → ${f1(c.s1)} m/s · 움직이기 시작` : c.s1 < .02 && c.s0 >= .02 ? `${f1(c.s0)} → 0 m/s · 멈춤` : rev ? `${f1(c.s0)} → 0 → ${f1(c.s1)} m/s · 멈췄다가 되돌아옴` : `${f1(c.s0)} → ${f1(c.s1)} m/s${Math.abs(c.s1 - c.s0) < .05 ? ' · 그대로' : c.s1 > c.s0 ? ' · 빨라짐' : ' · 느려짐'}`;
@@ -1137,18 +1359,20 @@ function renderResult() {
     const what = useAng ? '운동 방향이' : '속력이';
     const v0s = useAng ? `${Math.round(m0)}°` : `${f1(m0)} m/s`, v1s = useAng ? `${Math.round(m1)}°` : `${f1(m1)} m/s`;
     note = `직전(${f1(p.cond.F)} N)보다 힘이 ${bigger ? '커서' : '작아서'} ${what} ${m1 > m0 + 1e-6 ? '더 많이' : m1 < m0 - 1e-6 ? '더 적게' : '똑같이'} 변했어요 (${v0s} → ${v1s}).`;
-  } else if (c.kind === 'none') note = r.cond.v0 > 0 ? '힘을 주지 않았더니 같은 빠르기로 곧게 나아갔어요.' : '힘을 주지 않았더니 퍽이 그대로 멈춰 있어요.';
+  } else if (rev) note = '반대 방향의 힘이 퍽을 멈춘 뒤 거꾸로 밀어 보냈어요. 속력이 0까지 줄었다가 다시 커지고, 운동 방향은 반대로 바뀌었어요.';
+  else if (c.kind === 'none' && r.cond.d === 'bal' && r.cond.F > 0) note = `양쪽에서 ${f1(r.cond.F)} N씩 반대로 밀었는데 퍽이 ${r.cond.v0 > 0 ? '같은 빠르기로 곧게 나아갔어요' : '그대로 멈춰 있어요'}.`;
+  else if (c.kind === 'none') note = r.cond.v0 > 0 ? '힘을 주지 않았더니 같은 빠르기로 곧게 나아갔어요.' : '힘을 주지 않았더니 퍽이 그대로 멈춰 있어요.';
   else if (!p) note = '힘의 크기만 바꿔 한 번 더 해 보면 변화의 크기를 비교할 수 있어요.';
   else note = '방향이나 처음 상태가 달라요. 힘의 크기만 바꿔 비교해 볼까요?';
   $('#resNote').textContent = note;
 }
 function renderBook() {
-  const n = ['speed', 'dir', 'both'].filter(k => book[k]).length;
-  $('#bookCount').textContent = `${n}/3`;
-  $('#book').innerHTML = ['speed', 'dir', 'both'].map(k => {
+  const n = BK.filter(k => book[k]).length;
+  $('#bookCount').textContent = `${n}/4`;
+  $('#book').innerHTML = BK.map(k => {
     const b = book[k];
-    return `<li class="${b ? 'on' : ''}" title="${b ? `예: ${BOOK[k].eg}` : ''}"><span class="bk-ic">${b ? icon('check') : ''}</span><span class="bk-n">${BOOK[k].short}</span><span class="bk-d">${b ? condText(b) : '어떤 힘이면 될까요?'}</span></li>`;
-  }).join('') + (n === 3 ? `<li class="done-row"><p class="book-done">세 가지 운동을 모두 만들었어요. 예: ${BOOK.speed.eg.split(' · ')[0]}(속력만) · ${BOOK.dir.eg.split(' · ')[0]}(방향만) · ${BOOK.both.eg.split(' · ')[0]}(둘 다)</p><a class="textlink" href="${SS.CHANNELS.yt}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)"><svg class="ic yt-ic" viewBox="0 0 24 24" aria-hidden="true">${SS.ICONS.yt}</svg>유튜브에서 더 보기</a></li>` : '');
+    return `<li class="${b ? 'on' : ''}" title="${b ? `예: ${BOOK[k].eg}` : ''}"><span class="bk-ic">${b ? icon('check') : ''}</span><span class="bk-n">${BOOK[k].short}</span><span class="bk-d">${b ? condText(b) : BOOK[k].hint || '어떤 힘이면 될까요?'}</span></li>`;
+  }).join('') + (n === 4 ? `<li class="done-row"><p class="book-done">네 가지를 모두 찾았어요. ‘생활 속 예’ 탭에서 교과서 속 운동도 나눠 봐요.</p><a class="textlink" href="${SS.CHANNELS.yt}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)"><svg class="ic yt-ic" viewBox="0 0 24 24" aria-hidden="true">${SS.ICONS.yt}</svg>유튜브에서 더 보기</a></li>` : '');
 }
 function syncDeck() {
   $$('#startChips .chip').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v0 === C.v0)));
@@ -1161,15 +1385,16 @@ function syncDeck() {
   const running = !!trial;
   $('#goBtn').innerHTML = running ? `${icon('reset')}다시 출발` : `${icon('play')}${C.v0 > 0 ? '출발' : '힘 주기'}`;
   $('#ghostTog').setAttribute('aria-pressed', String(showGhost));
-  $('#stageGoal').textContent = tab === 'motion' ? '힘의 방향과 크기를 고르고 출발해요 — 퍽이 어떻게 달라지는지 보세요' : '자 끝을 누르는 힘을 바꿔 자가 휘는 정도를 비교해요';
+  $('#stageGoal').textContent = { motion: '힘의 방향과 크기를 고르고 출발해요 — 퍽이 어떻게 달라지는지 보세요', shape: '자 끝을 누르는 힘을 바꿔 자가 휘는 정도를 비교해요', sort: '점 사진을 보고 속력·운동 방향 가운데 무엇이 변하는지 골라요' }[tab];
 }
 function setTab(t) {
   tab = t; $('#lab').dataset.tab = t;
   $$('#tabSeg [role=tab]').forEach(b => { b.setAttribute('aria-selected', String(b.dataset.tab === t)); b.tabIndex = b.dataset.tab === t ? 0 : -1; });
-  $('#stage').setAttribute('aria-labelledby', t === 'motion' ? 'tabMotion' : 'tabShape');
-  svgM.toggleAttribute('hidden', t !== 'motion'); svgS.toggleAttribute('hidden', t !== 'shape');   // SVG 요소에는 .hidden 속성이 없다
-  $('#deckM').hidden = t !== 'motion'; $('#deckS').hidden = t !== 'shape';
+  $('#stage').setAttribute('aria-labelledby', { motion: 'tabMotion', shape: 'tabShape', sort: 'tabSort' }[t]);
+  svgM.toggleAttribute('hidden', t !== 'motion'); svgS.toggleAttribute('hidden', t !== 'shape'); svgE.toggleAttribute('hidden', t !== 'sort');   // SVG 요소에는 .hidden 속성이 없다
+  $('#deckM').hidden = t !== 'motion'; $('#deckS').hidden = t !== 'shape'; $('#deckE').hidden = t !== 'sort';
   save(); syncDeck(); sizeText();
+  if (t === 'sort') { renderE(); renderEDeck(); }
 }
 function go() {
   if (C.d === 'turn' && C.v0 === 0) { toast('멈춰 있는 퍽은 줄로 돌릴 수 없어요. 처음 상태를 ‘움직이는 중’으로 바꿔 주세요.'); return; }
@@ -1186,11 +1411,12 @@ function sizeText() {
     svg.style.setProperty('--h3', `${(3 / p).toFixed(3)}px`);
     return p;
   };
-  pxuM = set(svgM, 344, 188) || pxuM; pxuS = set(svgS, 52, 23) || pxuS;
+  pxuM = set(svgM, 344, 188) || pxuM; pxuS = set(svgS, 52, 23) || pxuS; set(svgE, 344, 188);
   buildScale(); renderM(); renderS();
 }
 function step(dt) {
   if (trial) { stepTrial(trial, dt); if (trial) renderM(); }
+  stepE(dt);
   const target = SAG_PER_N * P.F;
   if (Math.abs(sag - target) > 1e-4) { sag += (target - sag) * (1 - Math.exp(-dt / .07)); if (Math.abs(sag - target) < .004) sag = target; renderS(); }
 }
@@ -1220,43 +1446,89 @@ function strobeFig(kind) {
   if (kind === 'both') { for (let i = 0; i < 5; i++) pts.push([10 + i * 10, 34]); for (let i = 1; i <= 3; i++) pts.push([50 + i * 12, 34 - i * i * 3.2]); }
   return pts.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="2.4" style="fill:${i < 5 ? 'var(--dot-before)' : 'var(--dot-after)'}"/>`).join('');
 }
+function relFig() {   // 힘의 방향과 운동 방향의 관계 (천재 176쪽 · 동아 168~169쪽 그림처럼)
+  const P4 = [
+    { d: Array.from({ length: 6 }, (_, i) => [8 + 2.4 * i * i + 4 * i, 30]), f: [2, [1, 0]], t: ['같은 방향', '빨라짐'] },
+    { d: Array.from({ length: 6 }, (_, i) => [8 + 64 * (1 - (1 - i / 5) ** 2), 30]), f: [2, [-1, 0]], t: ['반대 방향', '느려짐'] },
+    { d: Array.from({ length: 6 }, (_, i) => { const a = -2.4 + i * .5; return [38 + 26 * Math.cos(a), 44 + 26 * Math.sin(a)]; }), f: [3, 'c', [38, 44]], t: ['늘 수직', '방향만'] },
+    { d: Array.from({ length: 6 }, (_, i) => [8 + 13 * i, 46 - 15 * i + 2.4 * i * i]), f: [1, [0, 1]], t: ['비스듬히', '둘 다'] },
+  ];
+  return P4.map((p, j) => {
+    const [i, u0, c] = p.f, [x, y] = p.d[i];
+    const u = u0 === 'c' ? (() => { const dx = c[0] - x, dy = c[1] - y, d = Math.hypot(dx, dy); return [dx / d, dy / d]; })() : u0;
+    const L = 18, tx = x + u[0] * L, ty = y + u[1] * L, bx = tx - u[0] * 5, by = ty - u[1] * 5;
+    return `<g transform="translate(${j * 80} 0)">${p.d.map(([px, py]) => `<circle cx="${px}" cy="${py}" r="2.6" style="fill:var(--dot-after)"/>`).join('')}
+      <line x1="${x}" y1="${y}" x2="${bx}" y2="${by}" style="stroke:var(--force);stroke-width:2.4"/><path d="M${tx} ${ty}L${bx - u[1] * 3.6} ${by + u[0] * 3.6}L${bx + u[1] * 3.6} ${by - u[0] * 3.6}Z" style="fill:var(--force)"/>
+      <text x="40" y="86" style="fill:var(--text-2);font:600 11px var(--font-ui);text-anchor:middle">${p.t[0]}</text><text x="40" y="101" style="fill:var(--text-1);font:800 12px var(--font-ui);text-anchor:middle">${p.t[1]}</text></g>`;
+  }).join('');
+}
 function theory() {
   const r = runs[runs.length - 1];
-  return `<article class="tcard"><h3>힘은 운동 상태를 바꿔요</h3>
+  return `<article class="tcard"><h3>운동 상태가 변하는 세 가지</h3>
     <figure><svg viewBox="0 0 300 70" role="img" aria-label="속력만 변하는 운동, 방향만 변하는 운동, 둘 다 변하는 운동의 점 사진">
       <rect width="300" height="70" style="fill:var(--stage)"/>
       ${['speed', 'dir', 'both'].map((k, i) => `<g transform="translate(${i * 100} 4)">${strobeFig(k)}<text x="50" y="60" style="fill:var(--text-1);font:700 12px var(--font-ui);text-anchor:middle">${['속력만', '방향만', '둘 다'][i]}</text></g>`).join('')}
     </svg></figure>
-    <p class="def">물체에 힘이 작용하면 속력이 변하거나, 운동 방향이 변하거나, 둘 다 변해요.</p>
-    <p>점 사이 간격이 넓어지면 빨라진 것, 좁아지면 느려진 것이에요. 점이 이어지는 길이 꺾이면 운동 방향이 변한 것이에요. 힘이 작용하지 않으면 운동 상태는 변하지 않아요.</p>
-    <p class="link">${r ? `방금 ${condText(r.cond)}로 밀었을 때 ‘${KIND[r.cls.kind]}’.` : '에어 테이블에서 네 가지 방향으로 밀어 보고, 변화 도감을 채워 보세요.'}</p></article>
-  <article class="tcard"><h3>힘이 클수록 변화도 커요</h3>
-    <p class="def">같은 시간 동안 같은 방향으로 밀 때, 힘이 클수록 속력이나 운동 방향이 더 많이 변해요.</p>
-    <p>에어 테이블은 공기가 퍽을 살짝 띄워 마찰이 거의 없어요. 그래서 힘을 주는 0.4초 동안에만 운동 상태가 변하고, 그 뒤에는 바뀐 속력과 방향 그대로 나아가요.</p>
-    <p class="link">방향과 처음 상태는 그대로 두고 힘의 크기만 바꿔 두 번 밀어 보세요. 흐린 점(직전 결과)과 비교할 수 있어요.</p></article>
-  <article class="tcard"><h3>힘은 모양도 바꿔요</h3>
+    <p class="def">운동 상태는 물체의 속력과 운동 방향이에요. 물체에 작용하는 알짜힘이 0이 아니면 운동 상태가 변해요.</p>
+    <p>알짜힘(합력)은 물체에 작용하는 모든 힘을 합한 것과 같은 효과를 내는 하나의 힘이에요. 점 사진에서 점 간격이 넓어지면 빨라진 것, 좁아지면 느려진 것, 점이 이어지는 길이 휘면 운동 방향이 변한 것이에요.</p>
+    <p class="link">${r ? `방금 ${condText(r.cond)}로 밀었을 때 ‘${KIND[r.cls.kind]}’.` : '에어 테이블에서 여러 방향으로 밀어 보고, 변화 도감을 채워 보세요.'}</p></article>
+  <article class="tcard"><h3>힘의 방향이 변화를 정해요</h3>
+    <figure><svg viewBox="0 0 320 108" role="img" aria-label="힘이 운동 방향과 같으면 빨라지고, 반대면 느려지고, 늘 수직이면 방향만, 비스듬하면 둘 다 변한다">
+      <rect width="320" height="108" style="fill:var(--stage)"/>${relFig()}
+    </svg></figure>
+    <p class="def">힘이 운동 방향과 나란하면 속력만, 늘 수직이면 운동 방향만, 비스듬하면 둘 다 변해요.</p>
+    <p>짚라인을 타고 내려갈 때는 빨라지고, 컬링 스톤은 마찰력 때문에 느려져요. 대관람차·회전 그네·인공위성은 늘 중심 쪽으로 힘을 받아 방향만 바뀌고, 비스듬히 던진 공과 그네는 둘 다 변해요.</p>
+    <p class="link">실험의 ‘운동 방향·반대 방향’은 속력만, ‘늘 옆으로’는 방향만 변해요. ‘옆으로’는 처음엔 수직이지만 퍽이 꺾이면서 비스듬해져 둘 다 변해요. ‘반대 방향’으로 아주 세게 밀면 퍽이 멈췄다가 되돌아오는데, 이때는 운동 방향도 반대로 바뀌어요(위로 던진 공이 다시 떨어질 때처럼).</p></article>
+  <article class="tcard"><h3>알짜힘이 0이면 그대로예요</h3>
+    <figure><svg viewBox="0 0 300 104" role="img" aria-label="바닥에 놓인 책에는 중력과 바닥이 떠받치는 힘이 평형을 이루고, 양쪽에서 같은 힘으로 민 퍽도 그대로 움직인다">
+      <rect width="300" height="104" style="fill:var(--stage)"/>
+      <rect x="10" y="66" width="120" height="8" style="fill:var(--desk-lo)"/><rect x="46" y="50" width="48" height="16" rx="2" style="fill:var(--puck)"/>
+      <line x1="70" y1="58" x2="70" y2="24" style="stroke:var(--force);stroke-width:3"/><path d="M70 16 64 26h12Z" style="fill:var(--force)"/>
+      <line x1="70" y1="58" x2="70" y2="90" style="stroke:var(--force);stroke-width:3"/><path d="M70 98 64 88h12Z" style="fill:var(--force)"/>
+      <text x="78" y="22" style="fill:var(--text-1);font:600 11px var(--font-ui)">떠받치는 힘</text><text x="78" y="96" style="fill:var(--text-1);font:600 11px var(--font-ui)">중력</text>
+      <circle cx="228" cy="52" r="9" style="fill:var(--puck)"/>
+      <line x1="220" y1="52" x2="190" y2="52" style="stroke:var(--force);stroke-width:3"/><path d="M182 52 192 46v12Z" style="fill:var(--force)"/>
+      <line x1="236" y1="52" x2="266" y2="52" style="stroke:var(--force);stroke-width:3"/><path d="M274 52 264 46v12Z" style="fill:var(--force)"/>
+      <text x="228" y="84" style="fill:var(--text-1);font:700 12px var(--font-ui);text-anchor:middle">3 N − 3 N = 0 N</text>
+    </svg></figure>
+    <p class="def">크기가 같은 두 힘이 일직선에서 반대 방향으로 작용하면 알짜힘이 0이고, 두 힘은 평형을 이뤄요.</p>
+    <p>알짜힘이 0이면 운동 상태가 변하지 않아요. 바닥에 놓인 책은 중력과 바닥이 떠받치는 힘이, 물에 뜬 배는 중력과 부력이 평형을 이뤄요. 움직이는 물체도 알짜힘이 0이면 같은 빠르기로 곧게 나아가요(컨베이어 벨트 위 상자).</p>
+    <p class="link">${book.none ? `실험에서 ${condText(book.none)}로 밀었더니 운동 상태가 변하지 않았어요.` : '‘양쪽 같은 힘’으로 움직이는 퍽과 멈춘 퍽을 밀어 보세요.'}</p></article>
+  <article class="tcard"><h3>힘의 크기 · 모양 변화</h3>
     <figure><svg viewBox="0 0 300 80" role="img" aria-label="탁자 끝에 고정한 자를 누르면 휘어진다">
       <rect width="300" height="80" style="fill:var(--stage)"/><rect x="0" y="36" width="110" height="44" style="fill:var(--desk-lo)"/>
       <path d="M30 32H110L270 32V36H110 30Z" style="fill:none;stroke:var(--ghost-dot);stroke-width:1.2;stroke-dasharray:4 3"/>
       <path d="M30 32H110Q200 36 268 58L268 62Q200 40 110 36H30Z" style="fill:var(--ruler);stroke:var(--ruler-edge)"/>
       <line x1="266" y1="58" x2="266" y2="76" style="stroke:var(--force);stroke-width:3"/><path d="M266 80 261 71h10Z" style="fill:var(--force)"/>
     </svg></figure>
-    <p class="def">힘은 물체의 모양도 변하게 해요. 누르는 힘이 클수록 자가 더 많이 휘어요.</p>
-    <p>자처럼 힘을 없애면 원래 모양으로 돌아오는 성질을 탄성이라고 해요.</p>
-    <p class="link">${P.pts.length >= 2 ? `기록한 점: ${P.pts.map(p => `${f1(p[0])} N → ${f1(p[1])} cm`).join(', ')}.` : '‘모양 변화’에서 누르는 힘을 여러 번 바꿔 그래프에 점을 찍어 보세요.'}</p></article>`;
+    <p class="def">힘은 물체의 모양이나 운동 상태를 변하게 하는 원인이에요. 힘의 단위는 N(뉴턴)이에요.</p>
+    <p>같은 시간 동안 같은 방향으로 밀 때 힘이 클수록 속력이나 방향이 더 많이 변해요. 점토를 누르거나 캔을 찌그러뜨리면 모양이 변하고, 누르는 힘이 클수록 자가 더 많이 휘어요.</p>
+    <p class="link">${P.pts.length >= 2 ? `자 휘기 기록: ${P.pts.map(p => `${f1(p[0])} N → ${f1(p[1])} cm`).join(', ')}.` : '힘의 크기만 바꿔 두 번 밀어 보고, ‘모양 변화’에서도 누르는 힘을 바꿔 보세요.'}</p></article>
+  <article class="tcard"><h3>교과서에서는</h3>
+    <p class="def">세 교과서 모두 굴러가는 공에 휴대용 선풍기로 바람을 불어 운동 상태가 변하는 모습을 관찰해요.</p>
+    <ul class="tb-list">
+      <li><b>천재</b> 174~179쪽 — 바람 방향(공 뒤·앞·옆)에 따른 공의 운동, 놀이 기구의 운동 분류, 힘의 평형 사례 조사</li>
+      <li><b>동아</b> 166~173쪽 — 미끄럼대를 굴러온 탁구공에 바람 불기, 여러 상황에서 힘의 작용 탐구, 헬륨 풍선으로 힘의 평형 만들기</li>
+      <li><b>비상</b> 178~183쪽 — 스펀지 공을 바람으로 과녁에 멈추게 하기, 순서도로 운동 분류하기, 바닥에 놓인 물체에 작용하는 힘</li>
+      <li>힘의 효과(모양·운동 상태) — 천재 153쪽 · 동아 146쪽 · 비상 159쪽</li>
+    </ul>
+    <p class="link">이 실험실은 바람 대신 0.4초 동안 미는 힘으로 같은 관찰을 하고, ‘생활 속 예’에서 교과서 속 운동을 나눠 봐요.</p></article>`;
 }
 const HELP = {
   how: `<ol><li><b>운동 상태 변화</b> — 처음 상태(움직이는 중/멈춰 있음), 힘의 방향, 힘의 크기를 고르고 <b>출발</b>을 눌러요. 퍽이 점선 자리에 오면 0.4초 동안 그 힘을 받아요. 0.2초마다 찍힌 점의 간격과 길의 꺾임으로 변화를 읽어요.</li>
-    <li>속력만·방향만·둘 다 변하는 운동을 만들어 <b>변화 도감</b>을 채워요. 힘의 크기만 바꿔 다시 하면 흐린 점(직전 결과)과 비교돼요.</li>
-    <li><b>모양 변화</b> — 자 끝을 누르는 힘을 바꾸고, 세워 둔 눈금자로 자 끝이 내려간 거리를 읽어요. <b>손 떼기</b>를 누르면 자가 돌아와요.</li></ol>`,
+    <li>속력만·방향만·둘 다 변하는 운동, 그리고 <b>양쪽 같은 힘</b>으로 변하지 않는 경우(힘의 평형)를 만들어 <b>변화 도감</b>을 채워요. 힘의 크기만 바꿔 다시 하면 흐린 점(직전 결과)과 비교돼요.</li>
+    <li><b>모양 변화</b> — 자 끝을 누르는 힘을 바꾸고, 세워 둔 눈금자로 자 끝이 내려간 거리를 읽어요. <b>손 떼기</b>를 누르면 자가 돌아와요.</li>
+    <li><b>생활 속 예</b> — 교과서에 나온 운동 8가지의 점 사진을 보고 속력만·운동 방향만·둘 다 가운데 골라요. 맞히면 물체에 작용하는 힘이 화살표로 나타나요. 몇 번이고 다시 골라도 돼요.</li></ol>`,
   keys: '실험 고르기 탭에 포커스: <kbd>←</kbd><kbd>→</kbd> · 힘의 크기 막대: <kbd>←</kbd><kbd>→</kbd> · <kbd>Space</kbd>(포커스가 버튼이 아닐 때) 출발',
   model: `<ul><li>에어 테이블은 마찰이 없다고 보았어요. 퍽 질량 1.0 kg, 움직이는 중일 때 처음 속력 1.0 m/s, 힘은 0.4초 동안 같은 크기로 작용해요.</li>
-    <li>‘운동 방향·반대 방향·옆으로’는 힘의 방향이 0.4초 동안 고정돼요. ‘늘 옆으로(줄)’는 핀에 묶은 줄이 퍽을 당기는 것처럼 힘이 늘 운동 방향에 수직이에요(줄 반지름 = 질량×속력²÷힘). 0.4초 뒤에 줄을 놓아요.</li>
+    <li>‘운동 방향·반대 방향·옆으로’는 힘의 방향이 0.4초 동안 고정돼요. ‘늘 옆으로’는 핀에 묶은 줄이 퍽을 당기는 것처럼 힘이 늘 운동 방향에 수직이에요(줄 반지름 = 질량×속력²÷힘). 0.4초 뒤에 줄을 놓아요.</li>
+    <li>‘양쪽 같은 힘’은 같은 크기의 두 힘이 운동 방향과 그 반대 방향으로 동시에 작용해 알짜힘이 0이에요.</li>
     <li>화살표 길이는 힘의 크기를 나타내요(1 N = 눈금 한 칸). 테이블 그림의 길이(cm)와는 다른 눈금이에요.</li>
     <li>속력은 0.1 m/s까지 보여요. 퍽이 테이블 가장자리에 닿으면 실험이 끝나요.</li>
-    <li>자 휘기: 30 cm 플라스틱 자를 탁자 밖으로 20 cm 내밀어 고정했어요. 끝이 내려간 거리는 누르는 힘 1 N에 약 4.4 cm로, 작게 휘는 범위에서 힘에 비례한다고 보았어요.</li></ul>`,
-  source: '<p>2022 개정 중학교 과학 ‘힘의 작용’ — [9과05-03] 알짜힘이 0이 아닐 때 물체의 운동 상태가 변함을 알고, 그 예를 조사하여 분류할 수 있다. (해설: 속력이 변하거나 운동 방향이 바뀌거나 두 가지가 모두 변하는 사례로 분류). 이전 판(세 칸 인포그래픽)의 ‘힘이 클수록 속력(km/h)이 커진다’는 표현을 ‘같은 시간 동안 힘이 클수록 속력의 변화가 커진다’로 바로잡았어요.</p>',
-  wipe: '두 실험의 조건, 결과와 직전 결과, 변화 도감, 자 휘기 그래프의 점',
+    <li>자 휘기: 30 cm 플라스틱 자를 탁자 밖으로 20 cm 내밀어 고정했어요. 끝이 내려간 거리는 누르는 힘 1 N에 약 4.4 cm로, 작게 휘는 범위에서 힘에 비례한다고 보았어요.</li>
+    <li>생활 속 예의 점 사진은 운동의 특징(빨라짐·느려짐·같은 빠르기, 곧은 길·휜 길)이 잘 보이도록 단순한 운동 모형으로 그렸고, 실제 크기·시간과는 달라요.</li></ul>`,
+  source: '<p>2022 개정 중학교 과학 ‘힘의 작용’ — [9과05-03] 알짜힘이 0이 아닐 때 물체의 운동 상태가 변함을 알고, 그 예를 조사하여 분류할 수 있다. [9과05-04] 다양한 사례에서 물체에 작용하는 힘과 힘의 평형 관계를 설명하고 …</p><p>교과서: 천재교육(임성숙) 중학교 과학 1 153·174~179쪽, 동아출판 146·166~173쪽, 비상교육 159·178~183쪽의 탐구 활동과 예(짚라인·컬링·대관람차·회전 그네·인공위성·농구공·그네·사과)를 실험과 분류 활동으로 옮겼어요. 그림은 교과서를 복사하지 않고 새로 그렸어요.</p><p>이전 판(세 칸 인포그래픽)의 ‘힘이 클수록 속력(km/h)이 커진다’는 표현은 ‘같은 시간 동안 힘이 클수록 속력의 변화가 커진다’로 바로잡았어요.</p>',
+  wipe: '세 활동의 조건, 결과와 직전 결과, 변화 도감, 자 휘기 그래프의 점, 생활 속 예 진행',
 };
 
 /* ═════════ 이벤트 · 시작 ═════════ */
@@ -1267,6 +1539,12 @@ function capture() {
       cond: `조건: ${C.v0 > 0 ? `움직이는 퍽(처음 속력 ${f1(V0)} m/s)` : '멈춰 있는 퍽'} · 힘의 방향 ${DIRS[C.d]} · 힘의 크기 ${f1(C.F)} N · 0.4초 동안`,
       state: r ? `최근 결과(${condText(r.cond)}): ${KIND[r.cls.kind]} — 속력 ${$('#resSpeed').textContent} · 운동 방향 ${$('#resDir').textContent}` : '아직 출발하지 않았어요' };
   }
+  if (tab === 'sort') {
+    const ex = EX[E.i];
+    return { svg: svgE, flashEl: $('#stage'), title: '힘의 크기와 물체의 변화 — 생활 속 예',
+      cond: `${ex.name} (${ex.src}) · 같은 시간 간격으로 찍은 점 사진`,
+      state: `${E.ok[ex.id] ? `분류: ${E_KIND[ex.k]}` : '아직 고르지 않았어요'} · 나눈 운동 ${EX.filter(x => E.ok[x.id]).length}/${EX.length}` };
+  }
   return { svg: svgS, flashEl: $('#stage'), title: '힘의 크기와 물체의 변화 — 모양 변화',
     cond: `자 끝을 누르는 힘 ${f1(P.F)} N (30 cm 플라스틱 자, 탁자 밖 20 cm)`,
     state: `자 끝이 내려간 거리 ${f1(sag)} cm${P.pts.length ? ` · 기록: ${P.pts.map(p => `${f1(p[0])} N→${f1(p[1])} cm`).join(', ')}` : ''}` };
@@ -1275,7 +1553,13 @@ function bind() {
   $('#clrBtn').innerHTML = `${icon('trash')}점 지우기`;
   $('#releaseBtn').innerHTML = `${icon('undo')}손 떼기`;
   $('#tabSeg').addEventListener('click', e => { const b = e.target.closest('[role=tab]'); if (b) setTab(b.dataset.tab); });
-  $('#tabSeg').addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); setTab(tab === 'motion' ? 'shape' : 'motion'); $(`#tabSeg [data-tab="${tab}"]`).focus(); } });
+  $('#tabSeg').addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); const L = ['motion', 'shape', 'sort'], j = (L.indexOf(tab) + (e.key === 'ArrowRight' ? 1 : 2)) % 3; setTab(L[j]); $(`#tabSeg [data-tab="${tab}"]`).focus(); } });
+  $('#ePrev').innerHTML = `${icon('chevL')}이전`; $('#eNext').innerHTML = `다음 운동${icon('chev')}`;
+  $('#eAns').addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) answerE(b.dataset.k); });
+  $('#ePrev').addEventListener('click', () => openE(E.i - 1));
+  $('#eNext').addEventListener('click', () => openE(E.i + 1));
+  $('#eReplay').addEventListener('click', () => openE(E.i));
+  $('#eList').addEventListener('click', e => { const b = e.target.closest('[data-ei]'); if (b) openE(+b.dataset.ei); });
   $('#startChips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; C.v0 = +b.dataset.v0; if (C.v0 === 0 && C.d === 'turn') C.d = 'side'; trial = null; save(); syncDeck(); renderM(); });
   $('#dirSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.getAttribute('aria-disabled') === 'true') { toast(b.title); return; } C.d = b.dataset.d; save(); syncDeck(); if (!trial) renderM(); });
   $('#magRng').addEventListener('input', e => { C.F = +e.target.value; save(); syncDeck(); if (!trial) renderM(); });
@@ -1293,11 +1577,11 @@ SS.init({
   id: 'magnitude-of-force', title: '힘의 크기와 물체의 변화', file: '힘의크기와물체의변화', version: APP_VERSION, date: APP_DATE,
   help: HELP, theory, capture, onResize: sizeText,
   onKey: e => { if (e.key === ' ' && tab === 'motion' && !e.target.closest('button,input,a')) { e.preventDefault(); go(); } },
-  onWipe: () => { C = { v0: 1, d: 'fwd', F: 3 }; book = { speed: null, dir: null, both: null }; runs = []; trial = null; showGhost = true; P = { F: 0, pts: [], ghost: null }; sag = 0; setTab('motion'); renderResult(); renderBook(); renderPlot(); renderM(); renderS(); },
+  onWipe: () => { C = { v0: 1, d: 'fwd', F: 3 }; book = { speed: null, dir: null, both: null, none: null }; E = { i: 0, ok: {}, tried: {} }; eAnim.n = 99; runs = []; trial = null; showGhost = true; P = { F: 0, pts: [], ghost: null }; sag = 0; setTab('motion'); renderResult(); renderBook(); renderPlot(); renderM(); renderS(); },
 });
 setTab(tab); setPress(P.F, false); renderResult(); renderBook(); renderPlot();
 SS.loop(step);
-window.MagLab = { go, step: dt => step(dt), state: () => ({ C, runs, book, trial, P, sag, tab }), setC: o => { Object.assign(C, o); syncDeck(); renderM(); }, setTab, setPress };
+window.MagLab = { go, step: dt => step(dt), state: () => ({ C, runs, book, trial, P, sag, tab, E, eAnim }), EX, openE, answerE, setC: o => { Object.assign(C, o); syncDeck(); renderM(); }, setTab, setPress };
 
 </script>
 </body>

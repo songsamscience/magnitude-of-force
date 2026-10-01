@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
-<meta name="version" content="2.1">
+<meta name="version" content="2.2">
 <meta name="description" content="에어 테이블 위의 퍽을 여러 방향·크기의 힘으로 밀어 속력·운동 방향이 변하는 운동과 알짜힘이 0인 힘의 평형을 만들고, 교과서 속 운동을 점 사진으로 분류하며 자를 눌러 모양 변화도 비교하는 중학교 과학 가상실험실">
 <meta property="og:title" content="송쌤과학 가상실험실 | 힘의 크기와 물체의 변화">
 <meta property="og:description" content="같은 퍽이라도 어느 쪽으로, 얼마나 세게 미느냐에 따라 빨라지거나, 꺾이거나, 둘 다 변해요">
@@ -234,6 +234,56 @@ dialog::backdrop{background:var(--scrim)}
 @media (max-width:360px){.icon-btn{width:38px}.utilities{gap:0}}
 
 /* ═══════ 이 실험실 ═══════ */
+/* 실험 기구 재질 키트 — 토큰(두 테마 같은 목록) · 클래스. apparatus.js와 함께 쓴다. */
+:root[data-theme="dark"]{
+  --ap-m0:#262c34;--ap-m1:#47505b;--ap-m2:#7c8793;--ap-m3:#b4bec8;--ap-m4:#eef3f7;
+  --ap-cast-top:#3a4653;--ap-cast-top2:#4b5866;--ap-cast-1:#2b3540;--ap-cast-2:#161c23;--ap-cast-label:#3c4855;
+  --ap-rub-1:#3a4048;--ap-rub-2:#1b1f24;
+  --ap-pl-1:#4a5664;--ap-pl-2:#323c48;--ap-pl-3:#1f2630;
+  --ap-wood-1:#a4794c;--ap-wood-2:#7f5a35;--ap-wood-3:#5c3f24;
+  --ap-brass-0:#fff2c2;--ap-brass-1:#f0d27a;--ap-brass-2:#c49a28;--ap-brass-3:#6f530f;
+  --ap-lcd-1:#0d1f17;--ap-lcd-2:#08140f;--ap-lcd-t:#7ef0b8;--ap-lcd-dim:#1d3a2c;
+  --ap-glass-tint:#ffffff;--ap-glass-edge:#9fbfd2;--ap-glass-line:#7f9db0;
+  --ap-shadow:#000000;--ap-hi:#ffffff;
+}
+:root[data-theme="light"]{
+  --ap-m0:#4a5360;--ap-m1:#7a8592;--ap-m2:#aab4be;--ap-m3:#dbe1e7;--ap-m4:#ffffff;
+  --ap-cast-top:#6a7684;--ap-cast-top2:#7d8997;--ap-cast-1:#525d6a;--ap-cast-2:#323a44;--ap-cast-label:#5d6976;
+  --ap-rub-1:#4a5059;--ap-rub-2:#262a30;
+  --ap-pl-1:#f6f8fa;--ap-pl-2:#dfe5ea;--ap-pl-3:#b9c4ce;
+  --ap-wood-1:#d8ad78;--ap-wood-2:#b8864f;--ap-wood-3:#8d6236;
+  --ap-brass-0:#fff6d2;--ap-brass-1:#f3d880;--ap-brass-2:#c69a1e;--ap-brass-3:#7a5a0c;
+  --ap-lcd-1:#163a2a;--ap-lcd-2:#0e2a1e;--ap-lcd-t:#a3ffd0;--ap-lcd-dim:#24503b;
+  --ap-glass-tint:#ffffff;--ap-glass-edge:#7f9fb4;--ap-glass-line:#6f8fa4;
+  --ap-shadow:#1c2834;--ap-hi:#ffffff;
+}
+.ap-contact{fill:url(#apContact)}
+.ap-cast-top{fill:url(#apCastTop)}
+.ap-cast-front{fill:url(#apCastFront)}
+.ap-cast-label{fill:var(--ap-cast-label);opacity:.6}
+.ap-edge-hi{fill:none;stroke:var(--ap-hi);stroke-width:.5;stroke-linecap:round;opacity:.28}
+.ap-edge-lo{fill:none;stroke:#000;stroke-width:.6;stroke-linecap:round;opacity:.25}
+.ap-rubber{fill:url(#apRubberY)}
+.ap-metal-x{fill:url(#apMetalX)}
+.ap-metal-y{fill:url(#apMetalY)}
+.ap-cap{fill:var(--ap-m3)}
+.ap-endcap{fill:var(--ap-m1);opacity:.55}
+.ap-block{fill:url(#apBlockY);stroke:var(--ap-m0);stroke-width:.5}
+.ap-knob{fill:url(#apRubberX);stroke:var(--ap-m0);stroke-width:.4}
+.ap-knurl{fill:none;stroke:#000;stroke-width:.45;opacity:.35}
+.ap-screw{fill:url(#apMetalX);stroke:var(--ap-m0);stroke-width:.35}
+.ap-slot{fill:none;stroke:var(--ap-m0);stroke-linecap:round}
+.ap-lcd-bezel{fill:#000;opacity:.45}
+.ap-lcd{fill:url(#apLcd)}
+.ap-lcd-t{fill:var(--ap-lcd-t);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-variant-numeric:tabular-nums}
+.ap-glare{fill:#fff;opacity:.06}
+.ap-plastic{fill:url(#apPlasticY)}
+.ap-wood{fill:url(#apWoodY)}
+.ap-brass{fill:url(#apBrassX)}
+.ap-glass{fill:url(#apGlassX);stroke:var(--ap-glass-edge);stroke-width:.8}
+.ap-glass-hi{fill:none;stroke:var(--ap-hi);stroke-linecap:round;opacity:.42}
+.ap-sphere{fill:url(#apSphere)}
+
 /* 힘의 크기와 물체의 변화 — 넓은 장면(에어 테이블은 가로로 긴 운동) + 아래 계기 덱 */
 :root[data-theme="dark"]{
   --e-ground:#1c3044;--e-line:#3d5873;--e-leaf:#2f6b4a;--e-trunk:#6b4a2f;--e-apple:#ff6b5a;--e-ball:#f59a3c;--e-stone:#aab6c2;--e-cabin:#f2c14e;--e-earth:#2f6fb5;--e-land:#3f9a5a;--e-ice:#20384f;--e-house:#c04a4a;--e-house2:#2a4f86;--e-sat:#d7dee6;--e-panel:#4c7fbf;
@@ -268,10 +318,15 @@ dialog::backdrop{background:var(--scrim)}
 .hole{fill:var(--hole)}
 .rail{fill:var(--rail)}
 .rail-hi{fill:none;stroke:var(--rail-hi);stroke-width:.8}
+.rail-sheen{fill:url(#apMetalY);opacity:.35}
+.rail-lit{fill:none;stroke:#fff;stroke-width:.7;opacity:.22;stroke-linecap:round}
+.rail-in{fill:none;stroke:#000;stroke-width:1.2;opacity:.25}
+.tbl-sheen{fill:url(#apSphere);opacity:.08}
+.puck-rim{fill:none;stroke:var(--puck-lo);stroke-width:1.1;opacity:.7}
 .puck-hi-s{stop-color:var(--puck-hi)}.puck-s{stop-color:var(--puck)}.puck-lo-s{stop-color:var(--puck-lo)}
 .puck{fill:url(#puckGrad);stroke:var(--puck-lo);stroke-width:.5}
 .puck-cap{fill:var(--puck-cap);opacity:.55}
-.puck-shadow{fill:#000;opacity:.18}
+.puck-shadow{fill:#000;opacity:.3}
 .puck-plan{fill:none;stroke:var(--guide);stroke-width:.6;stroke-dasharray:1.6 1.4}
 .zone-line{stroke:var(--zone);stroke-width:.7;stroke-dasharray:2 2;opacity:.8}
 .zone-t{fill:var(--force);font-size:var(--t12);font-weight:700;text-anchor:middle;paint-order:stroke;stroke:var(--table);stroke-width:var(--h3,3px);stroke-linejoin:round}
@@ -298,10 +353,18 @@ dialog::backdrop{background:var(--scrim)}
 /* 자 휘기 */
 .wall-bg{fill:var(--stage)}
 .desk{fill:url(#deskGrad);stroke:var(--desk-edge);stroke-width:.08}
+.desk-top{fill:url(#apWoodY)}
+.desk-hi{fill:#fff;opacity:.3}
+.desk-edge{fill:#000;opacity:.25}
+.desk-seam{stroke:#000;stroke-width:.08;opacity:.35}
+.clamp-lit{stroke:#fff;stroke-width:.1;opacity:.5;stroke-linecap:round}
+.thread{stroke:var(--ap-m0);stroke-width:.06}
+.scale-sh{fill:#000;opacity:.3}
+.scale-hi{fill:#fff;opacity:.5}
 .desk-hi-s{stop-color:var(--desk-hi)}.desk-lo-s{stop-color:var(--desk-lo)}
 .ruler{fill:var(--ruler);stroke:var(--ruler-edge);stroke-width:.06}
 .ruler-mark{stroke:var(--ruler-ink);stroke-width:.05}
-.clamp{fill:var(--clamp);stroke:var(--clamp-lo);stroke-width:.08}
+.clamp{fill:url(#apMetalY);stroke:var(--clamp-lo);stroke-width:.08}
 .clamp-lo{fill:var(--clamp-lo)}
 .scale{fill:var(--scale);stroke:var(--line-2);stroke-width:.06}
 .scale-tick{stroke:var(--scale-ink);stroke-width:.05}
@@ -321,22 +384,22 @@ dialog::backdrop{background:var(--scrim)}
 .e-cap.end{text-anchor:end}
 .e-path{fill:none;stroke:var(--e-line);stroke-width:.8;stroke-dasharray:2 2}
 .e-dot{fill:var(--dot-after);stroke:var(--stage);stroke-width:.6}
-.e-trunk{fill:var(--e-trunk)}.e-leaf{fill:var(--e-leaf)}.e-branch{stroke:var(--e-trunk);stroke-width:2.4;stroke-linecap:round}
+.e-trunk{fill:var(--e-trunk)}.e-leaf{fill:var(--e-leaf)}.e-leaf-hi{fill:#fff;opacity:.08}.e-bark{fill:none;stroke:#000;stroke-width:1;opacity:.18}.e-ground-hi{stroke:#fff;stroke-width:.6;opacity:.12}.e-brace{stroke:var(--ap-wood-3);stroke-width:2.4;stroke-linecap:round}.e-branch{stroke:var(--e-trunk);stroke-width:2.4;stroke-linecap:round}
 .e-apple{fill:var(--e-apple);stroke:var(--stage);stroke-width:.8}
 .e-rider{fill:var(--puck);stroke:var(--stage);stroke-width:.8}
-.e-ball{fill:var(--e-ball);stroke:#7a3a08;stroke-width:.7}
+.e-ball{fill:var(--e-ball);stroke:#7a3a08;stroke-width:.7}.e-seam{fill:none;stroke:#5a2a06;stroke-width:.55;opacity:.85}.e-stem{fill:none;stroke:var(--e-trunk);stroke-width:1;stroke-linecap:round}
 .e-pole{fill:var(--e-line)}
 .e-cable,.e-rope{stroke:var(--text-2);stroke-width:.9}
 .e-ice{fill:var(--e-ice);stroke:var(--e-line);stroke-width:.6}
 .e-house{fill:var(--e-house);opacity:.55}.e-house2{fill:var(--e-house2);opacity:.6}
-.e-stone{fill:var(--e-stone);stroke:var(--stage);stroke-width:.8}.e-handle{fill:var(--e-apple)}
+.e-stone{fill:var(--e-stone);stroke:var(--stage);stroke-width:.8}.e-stone-top{fill:#000;opacity:.12}.e-handle{fill:var(--e-apple)}
 .e-ring{fill:none;stroke:var(--e-line);stroke-width:2.2}.e-spoke{stroke:var(--e-line);stroke-width:.8}.e-leg{fill:none;stroke:var(--e-line);stroke-width:3;stroke-linecap:round}
 .e-hub{fill:var(--text-2)}
-.e-cabin{fill:var(--e-cabin);stroke:var(--stage);stroke-width:.6}
+.e-cabin{fill:var(--e-cabin);stroke:var(--stage);stroke-width:.6}.e-cabin-roof{fill:var(--e-house)}.e-cabin-win{fill:var(--stage);opacity:.55}.e-ring-in{fill:none;stroke:var(--e-line);stroke-width:.8;opacity:.6}
 .e-canopy{fill:var(--e-house2);opacity:.75}
 .e-orbit{fill:none;stroke:var(--e-line);stroke-width:.8;stroke-dasharray:2 2.4}
 .e-earth{fill:var(--e-earth)}.e-land{fill:var(--e-land)}
-.e-sat{fill:var(--e-sat)}.e-panel{fill:var(--e-panel)}
+.e-sat{fill:var(--e-sat)}.e-panel{fill:var(--e-panel)}.e-panel-grid{stroke:#fff;stroke-width:.35;opacity:.45}
 .e-board{fill:var(--scale)}.e-rim{stroke:var(--e-ball);stroke-width:2;stroke-linecap:round}.e-net{fill:none;stroke:var(--text-2);stroke-width:.6}
 .e-frame{fill:none;stroke:var(--e-line);stroke-width:3;stroke-linejoin:round}
 .e-f{stroke:var(--force);stroke-width:2.2}
@@ -913,8 +976,105 @@ const SS = (() => {
 })();
 
 /* ═══════ 이 실험실 ═══════ */
+/* ───────── 실험 기구 재질 키트 (중1 여섯 실험실 공용) ─────────
+   광원은 장면마다 하나, 왼쪽 위(shell.css --light-angle 215deg와 같다).
+   - 원기둥(세운 봉): 왼쪽 1/3에 좁은 하이라이트, 오른쪽으로 어두워진다 → apMetalX
+   - 가로 막대: 위쪽에 하이라이트 → apMetalY
+   - 주철 받침: 윗면이 밝고 앞면이 어둡다 → ap-cast-top / apCastFront
+   - 유리: 테두리 하이라이트 + 안쪽 반사선 + 뒤쪽 밝기 차이 → apGlassX + 하이라이트 선
+   - 바닥에 닿은 물체에는 접촉 그림자(apContact)를 깐다
+   색은 모두 apparatus.css의 테마 토큰(var)으로만 쓴다. AP.defs(svg)를 장면마다 한 번 부른다. */
+const AP = (() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const GRAD = {
+    apMetalX: ['h', [[0, '--ap-m1'], [.16, '--ap-m3'], [.3, '--ap-m4'], [.46, '--ap-m2'], [.8, '--ap-m1'], [1, '--ap-m0']]],
+    apMetalY: ['v', [[0, '--ap-m3'], [.22, '--ap-m4'], [.5, '--ap-m2'], [.84, '--ap-m1'], [1, '--ap-m0']]],
+    apBlockY: ['v', [[0, '--ap-m2'], [.12, '--ap-m3'], [.2, '--ap-m2'], [1, '--ap-m1']]],
+    apCastFront: ['v', [[0, '--ap-cast-1'], [1, '--ap-cast-2']]],
+    apCastTop: ['v', [[0, '--ap-cast-top2'], [1, '--ap-cast-top']]],
+    apRubberX: ['h', [[0, '--ap-rub-2'], [.32, '--ap-rub-1'], [1, '--ap-rub-2']]],
+    apRubberY: ['v', [[0, '--ap-rub-1'], [1, '--ap-rub-2']]],
+    apPlasticY: ['v', [[0, '--ap-pl-1'], [.55, '--ap-pl-2'], [1, '--ap-pl-3']]],
+    apPlasticX: ['h', [[0, '--ap-pl-2'], [.25, '--ap-pl-1'], [.7, '--ap-pl-2'], [1, '--ap-pl-3']]],
+    apWoodY: ['v', [[0, '--ap-wood-1'], [.5, '--ap-wood-2'], [1, '--ap-wood-3']]],
+    apBrassX: ['h', [[0, '--ap-brass-3'], [.2, '--ap-brass-1'], [.34, '--ap-brass-0'], [.55, '--ap-brass-2'], [1, '--ap-brass-3']]],
+    apLcd: ['v', [[0, '--ap-lcd-1'], [1, '--ap-lcd-2']]],
+  };
+  function defs(svg) {
+    if (svg.querySelector('#apDefsMark')) return;
+    let d = svg.querySelector('defs'); if (!d) d = mk('defs', {}, null), svg.insertBefore(d, svg.firstChild);
+    mk('g', { id: 'apDefsMark' }, d);
+    for (const id in GRAD) {
+      const [dir, stops] = GRAD[id];
+      const g = mk('linearGradient', dir === 'h' ? { id, x1: 0, y1: 0, x2: 1, y2: 0 } : { id, x1: 0, y1: 0, x2: 0, y2: 1 }, d);
+      for (const [o, v] of stops) mk('stop', { offset: o, style: `stop-color:var(${v})` }, g);
+    }
+    const gl = mk('linearGradient', { id: 'apGlassX', x1: 0, y1: 0, x2: 1, y2: 0 }, d);       // 유리: 가장자리가 밝고 가운데가 투명
+    [[0, .5], [.14, .08], [.5, .03], [.86, .05], [1, .3]].forEach(([o, a]) => mk('stop', { offset: o, style: `stop-color:var(--ap-glass-tint);stop-opacity:${a}` }, gl));
+    const c = mk('radialGradient', { id: 'apContact' }, d);
+    mk('stop', { offset: 0, style: 'stop-color:var(--ap-shadow);stop-opacity:.55' }, c);
+    mk('stop', { offset: .6, style: 'stop-color:var(--ap-shadow);stop-opacity:.22' }, c);
+    mk('stop', { offset: 1, style: 'stop-color:var(--ap-shadow);stop-opacity:0' }, c);
+    const s = mk('radialGradient', { id: 'apSphere', cx: .36, cy: .32, r: .72 }, d);            // 구·원판 하이라이트(색은 겹쳐 그린 면이 정한다)
+    mk('stop', { offset: 0, style: 'stop-color:#fff;stop-opacity:.75' }, s);
+    mk('stop', { offset: .35, style: 'stop-color:#fff;stop-opacity:.12' }, s);
+    mk('stop', { offset: 1, style: 'stop-color:#fff;stop-opacity:0' }, s);
+  }
+  /* 접촉 그림자: 바닥 위 (cx, y)에 납작한 타원 */
+  const contact = (g, cx, y, rx, ry, k = 1) => mk('ellipse', { cx, cy: y, rx, ry: ry ?? Math.max(1.2, rx * .1), class: 'ap-contact', style: k === 1 ? '' : `opacity:${k}` }, g);
+  /* 옆에서 본 주철 받침: (x, y) = 왼쪽 위, 윗면(앞뒤 깊이)과 앞면, 고무발 */
+  function base(g, x, y, w, h, o = {}) {
+    contact(g, x + w / 2, y + h + .6, w * .56, Math.max(2, h * .45));
+    const t = h * (o.top ?? .34), r = Math.min(3, h * .25);
+    mk('path', { d: `M${x + 3} ${y}H${x + w - 3}L${x + w} ${y + t}H${x}Z`, class: 'ap-cast-top' }, g);
+    mk('rect', { x, y: y + t, width: w, height: h - t, rx: r * .6, class: 'ap-cast-front' }, g);
+    mk('path', { d: `M${x + .8} ${y + t + .5}H${x + w - .8}`, class: 'ap-edge-hi' }, g);
+    if (o.feet !== false) for (const fx of [x + w * .08, x + w * .92 - Math.max(6, w * .07)]) mk('rect', { x: fx, y: y + h - .6, width: Math.max(6, w * .07), height: 2, rx: 1, class: 'ap-rubber' }, g);
+    if (o.label) mk('rect', { x: x + w * .3, y: y + t + (h - t) * .3, width: w * .4, height: (h - t) * .38, rx: 1, class: 'ap-cast-label' }, g);
+  }
+  /* 세운 봉: 금속 원기둥 + 윗마개 */
+  function rod(g, x, y, w, h, o = {}) {
+    mk('rect', { x, y, width: w, height: h, rx: Math.min(w * .35, 2.5), class: 'ap-metal-x' }, g);
+    if (o.cap !== false) mk('ellipse', { cx: x + w / 2, cy: y + .6, rx: w / 2, ry: Math.min(1.6, w * .14), class: 'ap-cap' }, g);
+  }
+  /* 가로 막대(팔): 위쪽 하이라이트 + 끝마개 */
+  function bar(g, x, y, w, h) {
+    mk('rect', { x, y, width: w, height: h, rx: h / 2, class: 'ap-metal-y' }, g);
+    mk('ellipse', { cx: x + w - h * .3, cy: y + h / 2, rx: h * .3, ry: h / 2 - .2, class: 'ap-endcap' }, g);
+  }
+  /* 손으로 돌리는 나사(손잡이): (x, y) = 축 중심, side = -1 왼쪽으로 나옴 / 1 오른쪽 */
+  function knob(g, x, y, side, s = 1) {
+    const L = 5 * s, H = 9 * s, sh = 3 * s, x0 = side < 0 ? x - sh - L : x + sh;
+    mk('rect', { x: side < 0 ? x - sh : x, y: y - 1.4 * s, width: sh, height: 2.8 * s, class: 'ap-metal-y' }, g);
+    mk('rect', { x: x0, y: y - H / 2, width: L, height: H, rx: 1.4 * s, class: 'ap-knob' }, g);
+    let k = ''; for (let i = 1; i < 4; i++) k += `M${(x0 + L * i / 4).toFixed(2)} ${(y - H / 2 + 1.2 * s).toFixed(2)}V${(y + H / 2 - 1.2 * s).toFixed(2)}`;
+    mk('path', { d: k, class: 'ap-knurl' }, g);
+    mk('path', { d: `M${x0 + .8 * s} ${y - H / 2 + .9 * s}H${x0 + L - .8 * s}`, class: 'ap-edge-hi' }, g);
+  }
+  /* 보스헤드: 봉을 감싸는 블록 + 손잡이 나사 */
+  function boss(g, x, y, w, h, o = {}) {
+    mk('rect', { x, y, width: w, height: h, rx: Math.min(2.6, h * .18), class: 'ap-block' }, g);
+    mk('path', { d: `M${x + 1.2} ${y + .9}H${x + w - 1.2}`, class: 'ap-edge-hi' }, g);
+    mk('path', { d: `M${x + 1.2} ${y + h - .6}H${x + w - 1.2}`, class: 'ap-edge-lo' }, g);
+    if (o.knob) knob(g, o.knob < 0 ? x : x + w, y + h / 2, o.knob, o.s || 1);
+    if (o.screw) screw(g, x + w / 2, y + h / 2, Math.min(w, h) * .16);
+  }
+  function screw(g, cx, cy, r) {
+    mk('circle', { cx, cy, r, class: 'ap-screw' }, g);
+    mk('path', { d: `M${cx - r * .62} ${cy + r * .3}L${cx + r * .62} ${cy - r * .3}`, class: 'ap-slot', style: `stroke-width:${(r * .32).toFixed(2)}` }, g);
+  }
+  /* 표시창: 안으로 들어간 테두리 + 위쪽 빛 반사 */
+  function lcd(g, x, y, w, h) {
+    mk('rect', { x: x - .8, y: y - .8, width: w + 1.6, height: h + 1.6, rx: 2.2, class: 'ap-lcd-bezel' }, g);
+    mk('rect', { x, y, width: w, height: h, rx: 1.6, class: 'ap-lcd' }, g);
+    mk('path', { d: `M${x + 1.2} ${y + 1}H${x + w * .6}L${x + w * .5} ${y + h * .32}H${x + 1.2}Z`, class: 'ap-glare' }, g);
+  }
+  return { defs, contact, base, rod, bar, knob, boss, screw, lcd, mk };
+})();
+
 /* ───────── 힘의 크기와 물체의 변화 — 에어 테이블 위 퍽 밀기 · 자 휘기 ───────── */
-const APP_VERSION = '2.1', APP_DATE = '2026-10-01';
+const APP_VERSION = '2.2', APP_DATE = '2026-10-01';
 const { $, $$, el, icon, toast, announce, store } = SS;
 
 /* ── 과학 진실층: 모형 값 ── */
@@ -950,10 +1110,18 @@ const svgM = $('#sceneM'), svgS = $('#sceneS');
 const T = (x, y) => [x, TH - y];                    // 테이블 좌표(cm, 위가 +) → SVG
 let pxuM = 3, pxuS = 20;
 function buildM() {
+  AP.defs(svgM);
   const g = $('#mTable');
+  AP.contact(g, TW / 2, TH + 9.5, TW * .54, 4);
   el('rect', { x: -8, y: -8, width: TW + 16, height: TH + 16, rx: 5, class: 'rail' }, g);
+  el('rect', { x: -8, y: -8, width: TW + 16, height: TH + 16, rx: 5, class: 'rail-sheen' }, g);
+  el('path', { d: `M-7 ${TH + 3}V-2.5Q-7 -7 -2.5 -7H${TW + 3}`, class: 'rail-lit' }, g);            // 광원 쪽(왼쪽 위) 테두리 빛
+  el('rect', { x: -1.6, y: -1.6, width: TW + 3.2, height: TH + 3.2, rx: 1.4, class: 'rail-in' }, g);  // 안쪽 턱
   el('rect', { x: 0, y: 0, width: TW, height: TH, class: 'tbl' }, g);
   el('rect', { x: 0, y: 0, width: TW, height: TH, class: 'tbl-holes' }, g);
+  el('rect', { x: 0, y: 0, width: TW, height: TH, class: 'tbl-sheen' }, g);
+  for (const [x, y] of [[-8, -8], [TW + 8, -8], [-8, TH + 8], [TW + 8, TH + 8]]) el('circle', { cx: x, cy: y, r: 4.4, class: 'ap-rubber' }, g);   // 모서리 고무 범퍼
+  el('rect', { x: TW / 2 - 14, y: TH + 3.4, width: 28, height: 3.2, rx: 1.2, class: 'ap-block' }, g);       // 송풍구 연결부
   el('rect', { x: -.4, y: -.4, width: TW + .8, height: TH + .8, class: 'rail-hi' }, g);
   const mk = $('#mMarks');
   el('line', { x1: X_PUSH, y1: 3, x2: X_PUSH, y2: TH - 3, class: 'zone-line' }, mk);
@@ -963,7 +1131,9 @@ function buildM() {
   const pk = $('#mPuck');
   el('ellipse', { id: 'pkSh', rx: PR * 1.02, ry: PR * .9, class: 'puck-shadow' }, pk);
   el('circle', { id: 'pk', r: PR, class: 'puck' }, pk);
+  el('circle', { id: 'pkRim', r: PR - .55, class: 'puck-rim' }, pk);
   el('circle', { id: 'pkCap', r: PR * .42, class: 'puck-cap' }, pk);
+  el('circle', { id: 'pkHi', r: PR, class: 'ap-sphere' }, pk);
   const ar = $('#mArrow');
   el('line', { id: 'strLine', class: 'string' }, ar);
   el('circle', { id: 'strPin', r: 1.3, class: 'pin' }, ar);
@@ -1077,7 +1247,7 @@ function renderM() {
   else { px = C.v0 > 0 ? X_START : X_PUSH; py = Y0; }
   const [qx, qy] = T(px, py);
   $('#pk').setAttribute('cx', qx); $('#pk').setAttribute('cy', qy);
-  $('#pkCap').setAttribute('cx', qx); $('#pkCap').setAttribute('cy', qy);
+  for (const id of ['#pkCap', '#pkRim', '#pkHi']) { $(id).setAttribute('cx', qx); $(id).setAttribute('cy', qy); }
   $('#pkSh').setAttribute('cx', qx + .9); $('#pkSh').setAttribute('cy', qy + 1.1);
   // 힘 화살표: 미는 동안에는 퍽에, 그 밖에는 ‘힘을 주는 자리’에 계획으로
   const pushing = trial && trial.phase === 'push';
@@ -1130,25 +1300,39 @@ function renderTags() {
 /* ═════════ 자 휘기 장면 ═════════ */
 const DESK_X = 20, TOP = 12, RT = .3;     // 탁자 끝 x · 탁자 윗면 y · 자 두께(그림)
 function buildS() {
+  AP.defs(svgS);
   const b = $('#sBack');
   el('rect', { x: 0, y: 7, width: 52, height: 23, class: 'wall-bg' }, b);
-  el('rect', { x: -1, y: TOP, width: DESK_X + 1, height: 30 - TOP + 1, class: 'desk' }, b);
-  el('rect', { x: -1, y: TOP, width: DESK_X + 1, height: .35, style: 'fill:var(--desk-hi);opacity:.6' }, b);
+  el('rect', { x: -1, y: TOP, width: DESK_X + 1, height: 30 - TOP + 1, class: 'desk' }, b);                // 책상 옆판
+  el('rect', { x: -1, y: TOP, width: DESK_X + 1, height: 2.4, class: 'desk-top' }, b);                      // 상판(두께 2.4 cm)
+  el('rect', { x: -1, y: TOP, width: DESK_X + 1, height: .3, class: 'desk-hi' }, b);
+  el('rect', { x: DESK_X - .25, y: TOP, width: .25, height: 30 - TOP + 1, class: 'desk-edge' }, b);
+  el('path', { d: `M-1 ${TOP + 2.4}H${DESK_X}`, class: 'desk-seam' }, b);
+  // 세운 눈금자 받침: 바닥 받침 + 기둥 (눈금자는 기둥에 끼워져 있다)
+  AP.contact(b, 44.5, 29.9, 3.4, .35);
+  el('rect', { x: 42.1, y: 29.1, width: 4.8, height: .8, rx: .25, class: 'ap-cast-front' }, b);
+  el('rect', { x: 44.25, y: 18.6, width: .5, height: 10.6, class: 'ap-metal-x' }, b);
   el('g', { id: 'sScale' }, b);
   el('text', { x: 1, y: 28.6, class: 's-cap' }, b).textContent = '옆에서 본 모습 · 30 cm 플라스틱 자, 탁자 밖 20 cm';
-  const f = $('#sFront');   // 죔쇠(C 클램프)
+  const f = $('#sFront');   // 죔쇠(C 클램프): 주물 몸체 · 고정 받침 · 나사 막대 · 회전 받침판 · T 손잡이
   el('path', { d: `M13.2 ${TOP - RT - 1.5}H17.4V${TOP + 3.6}H13.2V${TOP + 2.9}H16.6V${TOP - RT - .8}H13.2Z`, class: 'clamp' }, f);
-  el('rect', { x: 14.3, y: TOP - RT - 1.1, width: 1.3, height: .8, class: 'clamp-lo' }, f);
-  el('rect', { x: 14.3, y: TOP + 2.4, width: 1.3, height: .6, class: 'clamp-lo' }, f);
-  el('rect', { x: 14.75, y: TOP + 3.6, width: .4, height: 2.2, class: 'clamp-lo' }, f);
-  el('rect', { x: 13.9, y: TOP + 5.8, width: 2.2, height: .5, rx: .2, class: 'clamp' }, f);
+  el('path', { d: `M13.3 ${TOP - RT - 1.4}H17.3`, class: 'clamp-lit' }, f);
+  el('rect', { x: 14.25, y: TOP - RT - 1.15, width: 1.4, height: .85, rx: .15, class: 'ap-rubber' }, f);   // 위 받침(자를 누름)
+  el('rect', { x: 14.25, y: TOP + 2.35, width: 1.4, height: .55, rx: .15, class: 'ap-metal-y' }, f);      // 회전 받침판
+  el('rect', { x: 14.73, y: TOP + 2.9, width: .44, height: 3, class: 'ap-metal-x' }, f);                  // 나사 막대
+  let th = ''; for (let k = 0; k < 6; k++) th += `M14.73 ${(TOP + 3.95 + k * .32).toFixed(2)}l.44 -.14`;
+  el('path', { d: th, class: 'thread' }, f);
+  el('rect', { x: 13.5, y: TOP + 5.85, width: 2.9, height: .42, rx: .21, class: 'ap-metal-y' }, f);       // T 손잡이
+  for (const x of [13.5, 16.4]) el('circle', { cx: x, cy: TOP + 6.06, r: .3, class: 'ap-metal-x' }, f);
   const a = $('#sArrow');
   el('line', { id: 'sfb', class: 'sf-body' }, a); el('path', { id: 'sft', class: 'f-tick', style: 'stroke-width:.12' }, a); el('path', { id: 'sfh', class: 'sf-head' }, a); el('text', { id: 'sfl', class: 'sf-label' }, a);
 }
 function buildScale() {                               // 세워 둔 눈금자: 0 = 자 윗면 처음 높이. 작은 화면에서는 숫자를 2 cm마다
   const sc = $('#sScale'); sc.innerHTML = '';
   const X = 43.2, Y0s = TOP - RT, every = pxuS < 12 ? 2 : 1;
+  el('rect', { x: X + .12, y: Y0s - 1.05, width: 2.6, height: 8.4, rx: .15, class: 'scale-sh' }, sc);
   el('rect', { x: X, y: Y0s - 1.2, width: 2.6, height: 8.4, rx: .15, class: 'scale' }, sc);
+  el('rect', { x: X + .08, y: Y0s - 1.1, width: .18, height: 8.2, class: 'scale-hi' }, sc);
   for (let mm = 0; mm <= 60; mm++) {
     if (pxuS < 12 && mm % 5) continue;
     const y = Y0s + mm / 10, L = mm % 10 === 0 ? 1.1 : mm % 5 === 0 ? .75 : .45;
@@ -1205,47 +1389,48 @@ function renderPlot() {
 /* ═════════ 생활 속 예 — 교과서 속 운동을 점 사진으로 보고 나누기 ═════════
    점은 모두 같은 시간 간격으로 찍었다(현상별 단순 운동 모형). 장면 좌표 344×188, 아래가 +y. */
 const svgE = $('#sceneE');
+AP.defs(svgE);
 const EX = [
-  { id: 'apple', name: '나무에서 떨어지는 사과', src: '비상 179쪽', k: 'speed',
+  { id: 'apple', name: '나무에서 떨어지는 사과', k: 'speed',
     pts: () => Array.from({ length: 7 }, (_, i) => [196, 58 + 2.75 * i * i]),
     back: g => { tree(g, 172, 58); ground(g); },
     forces: [{ i: 4, u: [0, 1], name: '중력' }],
     why: '중력이 운동 방향과 같은 아래쪽으로 작용해요. 그래서 길은 곧고, 점 간격만 점점 넓어져요(빨라짐).' },
-  { id: 'zip', name: '짚라인을 타고 내려가기', src: '천재 176쪽', k: 'speed',
+  { id: 'zip', name: '짚라인을 타고 내려가기', k: 'speed',
     pts: () => { const a = [52, 50], b = [304, 152], L = Math.hypot(b[0] - a[0], b[1] - a[1]), u = [(b[0] - a[0]) / L, (b[1] - a[1]) / L]; return Array.from({ length: 8 }, (_, i) => { const s = 8 + 4.3 * i * i; return [a[0] + u[0] * s, a[1] + u[1] * s + 9]; }); },
-    back: g => { ground(g); el('rect', { x: 36, y: 40, width: 8, height: 132, class: 'e-pole' }, g); el('rect', { x: 306, y: 146, width: 6, height: 26, class: 'e-pole' }, g); el('line', { x1: 40, y1: 44, x2: 309, y2: 150, class: 'e-cable' }, g); },
+    back: g => { ground(g); el('rect', { x: 36, y: 40, width: 8, height: 132, class: 'ap-wood' }, g); el('rect', { x: 28, y: 36, width: 24, height: 5, rx: 1, class: 'ap-wood' }, g); el('path', { d: 'M24 172 40 120M56 172 40 120', class: 'e-brace' }, g); el('rect', { x: 306, y: 146, width: 6, height: 26, class: 'ap-wood' }, g); el('line', { x1: 40, y1: 44, x2: 309, y2: 150, class: 'e-cable' }, g); },
     forces: [{ i: 5, u: [.927, .375], name: '알짜힘' }],
     why: '줄을 따라 내려가는 쪽, 곧 운동 방향과 나란하게 알짜힘이 작용해요. 그래서 길은 곧고 점 간격만 넓어져요.' },
-  { id: 'curl', name: '손을 뗀 뒤 빙판 위를 미끄러지는 컬링 스톤', src: '천재 175쪽', k: 'speed',
+  { id: 'curl', name: '손을 뗀 뒤 빙판 위를 미끄러지는 컬링 스톤', k: 'speed',
     pts: () => Array.from({ length: 8 }, (_, i) => [44 + 226 * (1 - (1 - i / 7) ** 2), 96]),
     back: g => { el('rect', { x: 14, y: 66, width: 318, height: 60, rx: 4, class: 'e-ice' }, g); [26, 18, 10, 4].forEach((r, j) => el('circle', { cx: 300, cy: 96, r, class: j % 2 ? 'e-house2' : 'e-house' }, g)); el('text', { x: 18, y: 140, class: 'e-cap' }, g).textContent = '위에서 본 빙판'; },
     forces: [{ i: 3, u: [-1, 0], name: '마찰력' }],
     obj: 'stone',
     why: '마찰력이 운동 방향과 반대쪽으로 작용해요. 그래서 길은 곧고 점 간격이 점점 좁아져요(느려짐).' },
-  { id: 'wheel', name: '일정하게 도는 대관람차의 칸', src: '비상 179쪽', k: 'dir',
+  { id: 'wheel', name: '일정하게 도는 대관람차의 칸', k: 'dir',
     pts: () => Array.from({ length: 8 }, (_, i) => { const a = -2.6 + i * .42; return [172 + 64 * Math.cos(a), 88 + 64 * Math.sin(a)]; }),
-    back: g => { ground(g); el('path', { d: 'M172 88 132 172M172 88 212 172', class: 'e-leg' }, g); el('circle', { cx: 172, cy: 88, r: 64, class: 'e-ring' }, g); for (let j = 0; j < 12; j++) { const a = j * Math.PI / 6; el('line', { x1: 172, y1: 88, x2: 172 + 64 * Math.cos(a), y2: 88 + 64 * Math.sin(a), class: 'e-spoke' }, g); } el('circle', { cx: 172, cy: 88, r: 5, class: 'e-hub' }, g); },
+    back: g => { ground(g); el('path', { d: 'M172 88 132 172M172 88 212 172', class: 'e-leg' }, g); el('circle', { cx: 172, cy: 88, r: 64, class: 'e-ring' }, g); for (let j = 0; j < 12; j++) { const a = j * Math.PI / 6; el('line', { x1: 172, y1: 88, x2: 172 + 64 * Math.cos(a), y2: 88 + 64 * Math.sin(a), class: 'e-spoke' }, g); } el('circle', { cx: 172, cy: 88, r: 58, class: 'e-ring-in' }, g); el('circle', { cx: 172, cy: 88, r: 6, class: 'ap-metal-x' }, g); el('circle', { cx: 172, cy: 88, r: 6, class: 'ap-sphere' }, g); el('rect', { x: 118, y: 166, width: 108, height: 7, rx: 1.6, class: 'ap-cast-front' }, g); },
     forces: [{ i: 5, center: [172, 88], name: '중심 쪽 알짜힘' }],
     obj: 'cabin',
     why: '알짜힘이 늘 원의 중심 쪽, 곧 운동 방향에 수직으로 작용해요. 그래서 점 간격은 같고 길만 휘어요.' },
-  { id: 'chair', name: '위에서 본 회전 그네', src: '천재 176쪽', k: 'dir',
+  { id: 'chair', name: '위에서 본 회전 그네', k: 'dir',
     pts: () => Array.from({ length: 8 }, (_, i) => { const a = .3 + i * .45; return [172 + 72 * Math.cos(a), 94 - 72 * Math.sin(a)]; }),
     back: g => { el('circle', { cx: 172, cy: 94, r: 82, class: 'e-ground-c' }, g); for (let j = 0; j < 8; j++) { const a = j * Math.PI / 4; el('line', { x1: 172, y1: 94, x2: 172 + 30 * Math.cos(a), y2: 94 + 30 * Math.sin(a), class: 'e-spoke' }, g); } el('circle', { cx: 172, cy: 94, r: 30, class: 'e-canopy' }, g); el('circle', { cx: 172, cy: 94, r: 7, class: 'e-hub' }, g); el('text', { x: 12, y: 182, class: 'e-cap' }, g).textContent = '위에서 본 모습'; },
     forces: [{ i: 4, center: [172, 94], name: '중심 쪽 알짜힘' }],
     why: '쇠줄이 의자를 당겨 알짜힘이 늘 기둥 쪽, 운동 방향에 수직으로 작용해요. 그래서 빠르기는 그대로이고 방향만 바뀌어요.' },
-  { id: 'sat', name: '지구 둘레를 도는 인공위성', src: '동아 169쪽', k: 'dir',
+  { id: 'sat', name: '지구 둘레를 도는 인공위성', k: 'dir',
     pts: () => Array.from({ length: 8 }, (_, i) => { const a = 3.55 + i * .36; return [172 + 74 * Math.cos(a), 104 + 74 * Math.sin(a)]; }),
     back: g => { el('circle', { cx: 172, cy: 104, r: 74, class: 'e-orbit' }, g); el('circle', { cx: 172, cy: 104, r: 34, class: 'e-earth' }, g); el('path', { d: 'M150 92c6-8 16-6 18 2s-6 12-2 18-8 6-12 0-12-12-4-20zM180 80c8 0 14 6 12 12s-8 4-12 10-10-2-8-10 2-12 8-12zM176 118c6 0 10 4 6 8s-10 2-10-2 0-6 4-6z', class: 'e-land' }, g); },
     forces: [{ i: 5, center: [172, 104], name: '중력' }],
     obj: 'sat',
     why: '지구의 중력이 늘 지구 중심 쪽, 곧 운동 방향에 수직으로 작용해요. 그래서 점 간격은 같고 길만 휘어요.' },
-  { id: 'ball', name: '비스듬히 던진 농구공', src: '천재·동아·비상', k: 'both',
+  { id: 'ball', name: '비스듬히 던진 농구공', k: 'both',
     pts: () => Array.from({ length: 8 }, (_, i) => [48 + 34 * i, 140 - 42.4 * i + 4.71 * i * i]),
     back: g => { ground(g); el('rect', { x: 306, y: 44, width: 5, height: 46, class: 'e-board' }, g); el('rect', { x: 311, y: 70, width: 4, height: 102, class: 'e-pole' }, g); el('line', { x1: 286, y1: 82, x2: 306, y2: 82, class: 'e-rim' }, g); el('path', { d: 'M287 83l4 14h11l4-14', class: 'e-net' }, g); },
     forces: [{ i: 2, u: [0, 1], name: '중력' }],
     obj: 'ball',
     why: '중력(아래쪽)이 운동 방향과 비스듬하게 작용해요. 그래서 점 간격도 달라지고 길도 휘어요.' },
-  { id: 'swing', name: '앞뒤로 움직이는 그네', src: '동아 171쪽', k: 'both',
+  { id: 'swing', name: '앞뒤로 움직이는 그네', k: 'both',
     pts: () => Array.from({ length: 8 }, (_, i) => { const th = .8 * Math.cos(Math.PI * i / 7); return [172 - 118 * Math.sin(th), 22 + 118 * Math.cos(th)]; }),
     back: g => { ground(g); el('path', { d: 'M88 172 172 20 256 172', class: 'e-frame' }, g); el('circle', { cx: 172, cy: 22, r: 3, class: 'e-hub' }, g); },
     forces: [{ i: 2, u: [0, 1], name: '중력' }, { i: 2, center: [172, 22], name: '줄이 당기는 힘' }],
@@ -1257,11 +1442,14 @@ const E_HINT = { speed: '길이 곧게 이어져요. 점 간격은 어떻게 변
 let E = Object.assign({ i: 0, ok: {}, tried: {} }, store.get('sort', {}));
 const eAnim = { n: 99, t: 0 };              // 지금까지 찍힌 점 수 — 예를 열면 0.18초마다 하나씩
 function tree(g, x, y) {
-  el('rect', { x: x - 5, y: y + 10, width: 10, height: 172 - y - 10, rx: 2, class: 'e-trunk' }, g);
+  AP.contact(g, x + 3, 172.5, 26, 2.6);
+  el('path', { d: `M${x - 6} 172.5C${x - 4} 150 ${x - 5} ${y + 30} ${x - 3} ${y + 8}H${x + 4}C${x + 5} ${y + 30} ${x + 5} 150 ${x + 8} 172.5Z`, class: 'e-trunk' }, g);
+  el('path', { d: `M${x - 3} 168C${x - 2} 150 ${x - 2} ${y + 40} ${x - 1} ${y + 14}`, class: 'e-bark' }, g);
   [[0, 0, 34], [-24, 10, 22], [26, 8, 24], [6, -20, 22]].forEach(([dx, dy, r]) => el('circle', { cx: x + dx, cy: y + dy, r, class: 'e-leaf' }, g));
+  [[-8, -6, 22], [-26, 4, 13], [20, 0, 15], [2, -24, 13]].forEach(([dx, dy, r]) => el('circle', { cx: x + dx, cy: y + dy, r, class: 'e-leaf-hi' }, g));
   el('path', { d: `M${x + 12} ${y + 4}L${x + 24} ${y - 2}`, class: 'e-branch' }, g);
 }
-function ground(g) { el('rect', { x: -600, y: 172, width: 1544, height: 400, class: 'e-ground' }, g); }   // 넓은 화면에서도 땅이 끝나지 않게
+function ground(g) { el('rect', { x: -600, y: 172, width: 1544, height: 400, class: 'e-ground' }, g); el('path', { d: 'M-600 172.4H944', class: 'e-ground-hi' }, g); }   // 넓은 화면에서도 땅이 끝나지 않게
 function eArrow(g, x, y, u, name, L = 26) {
   const tx = x + u[0] * L, ty = y + u[1] * L, h = 6, bx = tx - u[0] * h, by = ty - u[1] * h, nx = -u[1], ny = u[0];
   el('line', { x1: x, y1: y, x2: bx, y2: by, class: 'e-f' }, g);
@@ -1279,10 +1467,17 @@ function renderE() {
   pts.slice(0, n).forEach(([x, y], j) => {
     const last = j === n - 1;
     if (!last) { el('circle', { cx: x, cy: y, r: 3.1, class: 'e-dot' }, dg); return; }
-    if (ex.obj === 'stone') { el('circle', { cx: x, cy: y, r: 7, class: 'e-stone' }, dg); el('rect', { x: x - 2, y: y - 9, width: 4, height: 6, rx: 1.5, class: 'e-handle' }, dg); }
-    else if (ex.obj === 'cabin') { el('rect', { x: x - 6, y: y - 2, width: 12, height: 10, rx: 2.5, class: 'e-cabin' }, dg); el('line', { x1: x, y1: y - 4, x2: x, y2: y - 2, class: 'e-spoke' }, dg); }
-    else if (ex.obj === 'sat') { el('rect', { x: x - 3.5, y: y - 3.5, width: 7, height: 7, rx: 1, class: 'e-sat' }, dg); el('rect', { x: x - 13, y: y - 2, width: 8, height: 4, class: 'e-panel' }, dg); el('rect', { x: x + 5, y: y - 2, width: 8, height: 4, class: 'e-panel' }, dg); }
-    else el('circle', { cx: x, cy: y, r: ex.obj === 'ball' ? 6.5 : 5.5, class: ex.obj === 'ball' ? 'e-ball' : ex.id === 'apple' ? 'e-apple' : 'e-rider' }, dg);
+    if (ex.obj === 'stone') { el('circle', { cx: x, cy: y, r: 7, class: 'e-stone' }, dg); el('circle', { cx: x, cy: y, r: 4.6, class: 'e-stone-top' }, dg); el('circle', { cx: x, cy: y, r: 7, class: 'ap-sphere' }, dg); el('rect', { x: x - 1.6, y: y - 6.5, width: 3.2, height: 7, rx: 1.4, class: 'e-handle' }, dg); }
+    else if (ex.obj === 'cabin') { el('line', { x1: x, y1: y, x2: x, y2: y + 2.4, class: 'e-spoke' }, dg); el('path', { d: `M${x - 7} ${y + 4.4}Q${x} ${y + .6} ${x + 7} ${y + 4.4}Z`, class: 'e-cabin-roof' }, dg); el('rect', { x: x - 6, y: y + 4, width: 12, height: 9, rx: 2.2, class: 'e-cabin' }, dg); el('rect', { x: x - 4.2, y: y + 5.6, width: 8.4, height: 3.4, rx: 1, class: 'e-cabin-win' }, dg); }
+    else if (ex.obj === 'sat') { el('rect', { x: x - 3.5, y: y - 3.5, width: 7, height: 7, rx: 1, class: 'e-sat' }, dg); for (const px of [x - 13.5, x + 5.5]) { el('rect', { x: px, y: y - 2.4, width: 8, height: 4.8, class: 'e-panel' }, dg); el('path', { d: `M${px + 2.7} ${y - 2.4}v4.8M${px + 5.3} ${y - 2.4}v4.8M${px} ${y}h8`, class: 'e-panel-grid' }, dg); } el('circle', { cx: x, cy: y, r: 3.5, class: 'ap-sphere' }, dg); }
+    else {
+      el('circle', { cx: x, cy: y, r: ex.obj === 'ball' ? 6.5 : 5.5, class: ex.obj === 'ball' ? 'e-ball' : ex.id === 'apple' ? 'e-apple' : 'e-rider' }, dg);
+      if (ex.obj === 'ball') el('path', { d: `M${x - 6.5} ${y}H${x + 6.5}M${x} ${y - 6.5}V${y + 6.5}M${x - 4.6} ${y - 4.6}Q${x - 1.6} ${y} ${x - 4.6} ${y + 4.6}M${x + 4.6} ${y - 4.6}Q${x + 1.6} ${y} ${x + 4.6} ${y + 4.6}`, class: 'e-seam' }, dg);
+      if (ex.id === 'apple') el('path', { d: `M${x} ${y - 5}q.6 -2.4 2 -3`, class: 'e-stem' }, dg);
+      if (ex.id === 'zip') el('path', { d: `M${x} ${y - 5.5}V${y - 9}`, class: 'e-rope' }, dg);
+      if (ex.id === 'swing') el('rect', { x: x - 7, y: y + 4.4, width: 14, height: 2.2, rx: 1, class: 'ap-wood' }, dg);
+      el('circle', { cx: x, cy: y, r: ex.obj === 'ball' ? 6.5 : 5.5, class: 'ap-sphere' }, dg);
+    }
   });
   const fg = $('#eForce'); fg.innerHTML = '';
   if (E.ok[ex.id] && n >= pts.length) ex.forces.forEach(f => {
@@ -1293,7 +1488,6 @@ function renderE() {
   });
   const tg = $('#eTags'); tg.innerHTML = '';
   el('text', { x: 6, y: 12, class: 'e-cap' }, tg).textContent = '점 사이 시간은 모두 같아요';
-  el('text', { x: 338, y: 12, class: 'e-cap end' }, tg).textContent = ex.src;
 }
 function renderEDeck() {
   const ex = EX[E.i], done = EX.filter(x => E.ok[x.id]).length, ok = !!E.ok[ex.id], tried = E.tried[ex.id];
@@ -1332,7 +1526,7 @@ function stepE(dt) {
 
 /* ═════════ 덱(조건·결과·도감) ═════════ */
 const KIND = { speed: '속력만 변했어요', dir: '운동 방향만 변했어요', both: '속력과 운동 방향이 모두 변했어요', none: '운동 상태가 변하지 않았어요' };
-const BOOK = {   // 예는 세 교과서(천재·동아·비상)에 나온 것
+const BOOK = {   // 예는 중학교 과학 교과서에 나오는 것
   speed: { name: '속력만 변하는 운동', short: '속력만', eg: '떨어지는 사과 · 짚라인 · 컬링 스톤' },
   dir: { name: '운동 방향만 변하는 운동', short: '방향만', eg: '대관람차 · 회전 그네 · 인공위성' },
   both: { name: '속력과 운동 방향이 모두 변하는 운동', short: '둘 다', eg: '비스듬히 던진 농구공 · 그네' },
@@ -1446,7 +1640,7 @@ function strobeFig(kind) {
   if (kind === 'both') { for (let i = 0; i < 5; i++) pts.push([10 + i * 10, 34]); for (let i = 1; i <= 3; i++) pts.push([50 + i * 12, 34 - i * i * 3.2]); }
   return pts.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="2.4" style="fill:${i < 5 ? 'var(--dot-before)' : 'var(--dot-after)'}"/>`).join('');
 }
-function relFig() {   // 힘의 방향과 운동 방향의 관계 (천재 176쪽 · 동아 168~169쪽 그림처럼)
+function relFig() {   // 힘의 방향과 운동 방향의 관계
   const P4 = [
     { d: Array.from({ length: 6 }, (_, i) => [8 + 2.4 * i * i + 4 * i, 30]), f: [2, [1, 0]], t: ['같은 방향', '빨라짐'] },
     { d: Array.from({ length: 6 }, (_, i) => [8 + 64 * (1 - (1 - i / 5) ** 2), 30]), f: [2, [-1, 0]], t: ['반대 방향', '느려짐'] },
@@ -1504,15 +1698,14 @@ function theory() {
     <p class="def">힘은 물체의 모양이나 운동 상태를 변하게 하는 원인이에요. 힘의 단위는 N(뉴턴)이에요.</p>
     <p>같은 시간 동안 같은 방향으로 밀 때 힘이 클수록 속력이나 방향이 더 많이 변해요. 점토를 누르거나 캔을 찌그러뜨리면 모양이 변하고, 누르는 힘이 클수록 자가 더 많이 휘어요.</p>
     <p class="link">${P.pts.length >= 2 ? `자 휘기 기록: ${P.pts.map(p => `${f1(p[0])} N → ${f1(p[1])} cm`).join(', ')}.` : '힘의 크기만 바꿔 두 번 밀어 보고, ‘모양 변화’에서도 누르는 힘을 바꿔 보세요.'}</p></article>
-  <article class="tcard"><h3>교과서에서는</h3>
-    <p class="def">세 교과서 모두 굴러가는 공에 휴대용 선풍기로 바람을 불어 운동 상태가 변하는 모습을 관찰해요.</p>
+  <article class="tcard"><h3>교과서 탐구와 연결</h3>
+    <p class="def">교과서에서는 굴러가는 공에 휴대용 선풍기로 바람을 불어 운동 상태가 변하는 모습을 관찰해요.</p>
     <ul class="tb-list">
-      <li><b>천재</b> 174~179쪽 — 바람 방향(공 뒤·앞·옆)에 따른 공의 운동, 놀이 기구의 운동 분류, 힘의 평형 사례 조사</li>
-      <li><b>동아</b> 166~173쪽 — 미끄럼대를 굴러온 탁구공에 바람 불기, 여러 상황에서 힘의 작용 탐구, 헬륨 풍선으로 힘의 평형 만들기</li>
-      <li><b>비상</b> 178~183쪽 — 스펀지 공을 바람으로 과녁에 멈추게 하기, 순서도로 운동 분류하기, 바닥에 놓인 물체에 작용하는 힘</li>
-      <li>힘의 효과(모양·운동 상태) — 천재 153쪽 · 동아 146쪽 · 비상 159쪽</li>
+      <li>바람을 공의 뒤·앞·옆에서 불 때 공의 운동 비교하기</li>
+      <li>놀이 기구와 운동 경기 속 운동을 속력·운동 방향으로 나누기</li>
+      <li>바닥에 놓인 물체처럼 힘의 평형을 이루는 사례 찾기</li>
     </ul>
-    <p class="link">이 실험실은 바람 대신 0.4초 동안 미는 힘으로 같은 관찰을 하고, ‘생활 속 예’에서 교과서 속 운동을 나눠 봐요.</p></article>`;
+    <p class="link">이 실험실은 바람 대신 0.4초 동안 미는 힘으로 같은 관찰을 하고, ‘생활 속 예’에서 교과서에 나오는 운동을 나눠 봐요.</p></article>`;
 }
 const HELP = {
   how: `<ol><li><b>운동 상태 변화</b> — 처음 상태(움직이는 중/멈춰 있음), 힘의 방향, 힘의 크기를 고르고 <b>출발</b>을 눌러요. 퍽이 점선 자리에 오면 0.4초 동안 그 힘을 받아요. 0.2초마다 찍힌 점의 간격과 길의 꺾임으로 변화를 읽어요.</li>
@@ -1527,7 +1720,7 @@ const HELP = {
     <li>속력은 0.1 m/s까지 보여요. 퍽이 테이블 가장자리에 닿으면 실험이 끝나요.</li>
     <li>자 휘기: 30 cm 플라스틱 자를 탁자 밖으로 20 cm 내밀어 고정했어요. 끝이 내려간 거리는 누르는 힘 1 N에 약 4.4 cm로, 작게 휘는 범위에서 힘에 비례한다고 보았어요.</li>
     <li>생활 속 예의 점 사진은 운동의 특징(빨라짐·느려짐·같은 빠르기, 곧은 길·휜 길)이 잘 보이도록 단순한 운동 모형으로 그렸고, 실제 크기·시간과는 달라요.</li></ul>`,
-  source: '<p>2022 개정 중학교 과학 ‘힘의 작용’ — [9과05-03] 알짜힘이 0이 아닐 때 물체의 운동 상태가 변함을 알고, 그 예를 조사하여 분류할 수 있다. [9과05-04] 다양한 사례에서 물체에 작용하는 힘과 힘의 평형 관계를 설명하고 …</p><p>교과서: 천재교육(임성숙) 중학교 과학 1 153·174~179쪽, 동아출판 146·166~173쪽, 비상교육 159·178~183쪽의 탐구 활동과 예(짚라인·컬링·대관람차·회전 그네·인공위성·농구공·그네·사과)를 실험과 분류 활동으로 옮겼어요. 그림은 교과서를 복사하지 않고 새로 그렸어요.</p><p>이전 판(세 칸 인포그래픽)의 ‘힘이 클수록 속력(km/h)이 커진다’는 표현은 ‘같은 시간 동안 힘이 클수록 속력의 변화가 커진다’로 바로잡았어요.</p>',
+  source: '<p>2022 개정 중학교 과학 ‘힘의 작용’ — [9과05-03] 알짜힘이 0이 아닐 때 물체의 운동 상태가 변함을 알고, 그 예를 조사하여 분류할 수 있다. [9과05-04] 다양한 사례에서 물체에 작용하는 힘과 힘의 평형 관계를 설명하고 …</p><p>중학교 과학 교과서의 탐구 활동과 생활 속 예(짚라인·컬링·대관람차·회전 그네·인공위성·농구공·그네·사과)를 실험과 분류 활동으로 옮겼고, 그림은 모두 새로 그렸어요.</p><p>이전 판(세 칸 인포그래픽)의 ‘힘이 클수록 속력(km/h)이 커진다’는 표현은 ‘같은 시간 동안 힘이 클수록 속력의 변화가 커진다’로 바로잡았어요.</p>',
   wipe: '세 활동의 조건, 결과와 직전 결과, 변화 도감, 자 휘기 그래프의 점, 생활 속 예 진행',
 };
 
@@ -1542,7 +1735,7 @@ function capture() {
   if (tab === 'sort') {
     const ex = EX[E.i];
     return { svg: svgE, flashEl: $('#stage'), title: '힘의 크기와 물체의 변화 — 생활 속 예',
-      cond: `${ex.name} (${ex.src}) · 같은 시간 간격으로 찍은 점 사진`,
+      cond: `${ex.name} · 같은 시간 간격으로 찍은 점 사진`,
       state: `${E.ok[ex.id] ? `분류: ${E_KIND[ex.k]}` : '아직 고르지 않았어요'} · 나눈 운동 ${EX.filter(x => E.ok[x.id]).length}/${EX.length}` };
   }
   return { svg: svgS, flashEl: $('#stage'), title: '힘의 크기와 물체의 변화 — 모양 변화',
